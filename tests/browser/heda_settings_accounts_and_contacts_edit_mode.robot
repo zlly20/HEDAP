@@ -50,8 +50,23 @@ Validate Edit Mode For Accounts and Contacts, Settings
     Click Element                   //div[contains(@class,'slds-form-element__control')]//span[contains(text(),'Sports Organization')]
     Click Element                   //div[contains(@class,'slds-form-element__control')]//span[contains(text(),'University Department')]
 
+    #Create new account 
+    Create And Return Department
+
+    #Create Account of type Academic Program
+    Create And Return Program
+
+    #Create new Contact
+    Create And Return Contact with Address     
+
+    #Create affiliation
+    #Create Primary Affiliation  History  contact
+
     #Save the changes
     Click Element                   //div[@class='slds-button-group']//span[contains(text(), 'Save')]
+
+
+
 
 
 *** Keywords ***

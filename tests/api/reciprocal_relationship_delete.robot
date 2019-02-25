@@ -6,8 +6,8 @@ Suite Teardown  Delete Session Records
 *** Test Cases ***
 
 Delete Separately Reciprocal First
-    &{contact1} =        API Create Contact
-    &{contact2} =        API Create Contact
+    &{contact1} =        API Create And Return Contact
+    &{contact2} =        API Create And Return Contact
     ${rel_id} =          Salesforce Insert  Relationship__c
     ...                      Contact__c=&{contact1}[Id]
     ...                      RelatedContact__c=&{contact2}[Id]
@@ -16,8 +16,8 @@ Delete Separately Reciprocal First
     Run Keyword And Expect Error  *ENTITY_IS_DELETED*  Salesforce Delete    Relationship__c  ${rel_id}
     
 Delete Separately Reciprocal Last
-    &{contact1} =        API Create Contact
-    &{contact2} =        API Create Contact
+    &{contact1} =        API Create And Return Contact
+    &{contact2} =        API Create And Return Contact
     ${rel_id} =          Salesforce Insert  Relationship__c
     ...                      Contact__c=&{contact1}[Id]
     ...                      RelatedContact__c=&{contact2}[Id]
@@ -27,8 +27,8 @@ Delete Separately Reciprocal Last
 
 Delete Together
     [tags]  unstable
-    &{contact1} =        API Create Contact
-    &{contact2} =        API Create Contact
+    &{contact1} =        API Create And Return Contact
+    &{contact2} =        API Create And Return Contact
     ${rel_id} =          Salesforce Insert  Relationship__c
     ...                      Contact__c=&{contact1}[Id]
     ...                      RelatedContact__c=&{contact2}[Id]

@@ -14,7 +14,7 @@ heda_lex_locators = {
             "title": '//div[contains(@class, "slds-card")]/header[.//span[@title="{}"]]',
         },
     },
-    "object": {
+    "object1": {
         "radio_button": "//div[contains(@class,'changeRecordTypeRightColumn')]/div/label[@class='slds-radio']/div[.//span[text()='{}']]/preceding::div[1]/span[@class='slds-radio--faux']"
     },
     "tab": "//div[@class='uiTabBar']/ul[@class='tabs__nav']/li[contains(@class,'uiTabItem')]/a[@class='tabHeader']/span[contains(text(), '{}')]",
