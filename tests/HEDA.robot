@@ -229,6 +229,29 @@ Create And Return Contact with Address
     Store Session Record      Contact  ${contact_id}
     [return]                  ${contact_id}     
 
+
+API Populate Create And Return Contact with Address
+    [Arguments]      ${first_name}      ${last_name}      ${mailing_street}      ${mailing_city}      ${mailing_zip}      ${mailing_state}      ${mailing_country}
+    Go To Object Home         Contact
+    Click Object Button       New
+    Populate Form
+    ...                       First Name=${first_name}
+    ...                       Last Name=${last_name}
+    Click Dropdown            Primary Address Type
+    Click Link                link=Work
+    Populate Address          Mailing Street            ${mailing_street}  
+    Populate Address          Mailing City              ${mailing_city}
+    Populate Address          Mailing Zip/Postal Code   ${mailing_zip}
+    Populate Address          Mailing State/Province    ${mailing_state}
+    Populate Address          Mailing Country           ${mailing_country}
+    Click Modal Button        Save    
+    Wait Until Modal Is Closed
+    
+    ${contact_id} =           Get Current Record Id
+    Store Session Record      Contact  ${contact_id}
+    [return]                  ${contact_id}  
+
+
 New And Return Contact for HouseHold
     Click Related List Button  Contacts    New 
     Wait Until Modal Is Open
