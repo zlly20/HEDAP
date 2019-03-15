@@ -60,7 +60,7 @@ Create A Contact
     Wait Until Element Is visible           //div[@class='modal-footer slds-modal__footer']//button[@title='Save']
     Click Element                           //div[@class='modal-footer slds-modal__footer']//button[@title='Save']
 
-    Sleep                                   10
+    #Sleep                                   10
 
 #Create Contact With Name Only
 
