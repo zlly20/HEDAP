@@ -25,8 +25,6 @@ Create A Contact
     Wait Until Element Is visible           //input[contains(@class,'firstName')]
     Click Element                           //input[contains(@class,'firstName')]
 
-    
-
     Input Text                              //input[contains(@class,'firstName')]    firstName
 
     Click Element                           //input[contains(@class,'lastName')]
@@ -39,14 +37,7 @@ Create A Contact
     Wait Until Element Is visible           //div[@class='autocompleteWrapper slds-grow']//input[@class=' default input uiInput uiInputTextForAutocomplete uiInput--default uiInput--input uiInput uiAutocomplete uiInput--default uiInput--lookup']
     Populate Field                          Program    lastName Administrative Account
 
-    #Input Text                              //div[@class='autocompleteWrapper slds-grow']//input[@class=' default input uiInput uiInputTextForAutocomplete uiInput--default uiInput--input uiInput uiAutocomplete uiInput--default uiInput--lookup']     ENTER
-    #Sleep                                   10
-    #Press Keys                              //div[@class='autocompleteWrapper slds-grow']//input[@class=' default input uiInput uiInputTextForAutocomplete uiInput--default uiInput--input uiInput uiAutocomplete uiInput--default uiInput--lookup']    ARROW_DOWN
-    #Press Keys                              //div[@class='autocompleteWrapper slds-grow']//input[@class=' default input uiInput uiInputTextForAutocomplete uiInput--default uiInput--input uiInput uiAutocomplete uiInput--default uiInput--lookup']    ARROW_DOWN
-    #Press Keys                              //div[@class='autocompleteWrapper slds-grow']//input[@class=' default input uiInput uiInputTextForAutocomplete uiInput--default uiInput--input uiInput uiAutocomplete uiInput--default uiInput--lookup']    ARROW_DOWN
-    #Press Keys                              //div[@class='autocompleteWrapper slds-grow']//input[@class=' default input uiInput uiInputTextForAutocomplete uiInput--default uiInput--input uiInput uiAutocomplete uiInput--default uiInput--lookup']    ENTER
-
-
+    #Create a New Account as part of this flow
     Click Element                           //span[@title='New Account']
     Wait Until Element Is visible           //button[@class='slds-button slds-button--neutral uiButton--default uiButton--brand uiButton']//span[@class=' label bBody']
     Click Element                           //button[@class='slds-button slds-button--neutral uiButton--default uiButton--brand uiButton']//span[@class=' label bBody']
@@ -60,7 +51,10 @@ Create A Contact
     Wait Until Element Is visible           //div[@class='modal-footer slds-modal__footer']//button[@title='Save']
     Click Element                           //div[@class='modal-footer slds-modal__footer']//button[@title='Save']
 
-    #Sleep                                   10
+    #Verify that we have ONE affiliated account
+    Reload Page
+    Wait Until Element Is visible           (//span[@title='(1)'])[1]
+
 
 #Create Contact With Name Only
 
