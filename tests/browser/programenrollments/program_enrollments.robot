@@ -95,13 +95,3 @@ Create A Contact
     Reload Page
     Wait Until Element Is visible           (//span[@title='(1)'])[1]
 
-
-#Create Contact With Name Only
-
-#    ${contact_id} =  Create And Return Contact
-#    &{contact} =     Salesforce Get  Contact  ${contact_id} 
-#    #Header Field Value    Account Name    &{contact}[LastName] Household
-#    Go To Object Home         Contact
-#    Verify Record    &{contact}[FirstName] &{contact}[LastName]
-
-#Create A Program Enrollment
