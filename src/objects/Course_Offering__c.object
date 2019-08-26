@@ -21,10 +21,6 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>Follow</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -61,6 +57,7 @@
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
+    <enableLicensing>false</enableLicensing>
     <enableReports>true</enableReports>
     <enableSearch>true</enableSearch>
     <enableSharing>true</enableSharing>
@@ -96,6 +93,20 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Facility__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>The Facility associated with the Course Offering.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The Facility associated with the Course Offering.</inlineHelpText>
+        <label>Facility</label>
+        <referenceTo>Facility__c</referenceTo>
+        <relationshipLabel>Course Offerings</relationshipLabel>
+        <relationshipName>Course_Offerings</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <fields>
         <fullName>Faculty__c</fullName>
@@ -135,10 +146,22 @@
         <relationshipLabel>Course Offerings</relationshipLabel>
         <relationshipName>Course_Offerings</relationshipName>
         <relationshipOrder>1</relationshipOrder>
-        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
         <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Time_Block__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Time Block</label>
+        <referenceTo>Time_Block__c</referenceTo>
+        <relationshipLabel>Time Blocks</relationshipLabel>
+        <relationshipName>Time_Blocks</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
     </fields>
     <label>Course Offering</label>
     <listViews>
@@ -153,4 +176,5 @@
     <pluralLabel>Course Offerings</pluralLabel>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
+    <visibility>Public</visibility>
 </CustomObject>

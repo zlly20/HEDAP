@@ -1,10 +1,8 @@
 /*
     Copyright (c) 2014, Salesforce.org
     All rights reserved.
-
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
-
     * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +11,6 @@
     * Neither the name of Salesforce.org nor the names of
       its contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
-
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
     "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
     LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,7 +29,7 @@
 * @date 2014
 * @group Settings
 * @group-content ../../ApexDocContent/Settings.htm
-* @description Installs Script for the HEDA package.
+* @description Installs Script for the EDA package.
 */
 global without sharing class STG_InstallScript implements InstallHandler {
 
@@ -66,16 +63,31 @@ global without sharing class STG_InstallScript implements InstallHandler {
 
             disablePreferredEmailEnforcement(previousVersion);
 
+            disablePreferredPhoneEnforcement(previousVersion);            
+
             populateAdminRecordTypeSetting(previousVersion);
 
+            setDefaultContactLanguageFluency(previousVersion);
+
             if(previousVersion != null && previousVersion.compareTo(new Version(1,38)) < 0) {
-                // We need to handle a special case to populate the Owned_by_Namespace__c field for HEDA Orgs before 1.38.
+                // We need to handle a special case to populate the Owned_by_Namespace__c field for EDA Orgs before 1.38.
                 populateNamespaceHandlers();
             }
 
             // Upgrade TDTM Configuration
             List<TDTM_Global_API.TdtmToken> defaultTokens = TDTM_Global_API.getDefaultTdtmConfig();
             TDTM_Global_API.setTdtmConfig(defaultTokens, 'hed');
+            
+            // Set CON_PreferredPhone_TDTM to false
+            List<Trigger_Handler__c> turnOffPreferredPhone = [SELECT Active__c FROM Trigger_Handler__c WHERE Class__c = 'CON_PreferredPhone_TDTM'];
+
+            if(turnOffPreferredPhone != NULL && turnOffPreferredPhone.size() != 0 && previousVersion.compareTo(new Version(1,82)) < 0) {
+                 turnOffPreferredPhone[0].Active__c = False;
+                 update turnOffPreferredPhone[0];
+            }
+
+            // Submit telemetry data back to the LMO using Feature Management
+            sendTelemetryData();
          }
 
          reparentAdminAddrs(context.previousVersion());
@@ -180,32 +192,6 @@ global without sharing class STG_InstallScript implements InstallHandler {
     }
 
     /*******************************************************************************************************
-    * @description Schedules a class that implements the Schedulable interface, if it's not already scheduled.
-    * @param JobName The name to give the scheduled job.
-    * @param frequency The frequency to schedule the job at.
-    * @param className The class to schedule. Should implement the Schedulable interface.
-    * @return The ID of the scheduled job.
-    */
-    public static String scheduleJobIfNotScheduled(String JobName, String frequency, String className) {
-
-        //Check if the job is already scheduled - CronJobDetail is the parent and CronTrigger is the child
-        //Type '7' is for scheduled Apex
-        List<CronTrigger> scheduledJobs = [select Id, CronJobDetail.Id from CronTrigger
-                    where CronJobDetail.Name = :JobName and CronJobDetail.JobType = '7'];
-
-        if(scheduledJobs.size() == 0) {
-            Type classType = Type.forName(className);
-
-            if(classType != null) {
-               Object instance = classType.newInstance();
-               if(instance instanceof Schedulable)
-                   return System.schedule(JobName, frequency, (Schedulable)instance);
-            }
-        }
-        return null;
-    }
-
-    /*******************************************************************************************************
     * @description Disables Preferred Email handling when upgrading to 1.33
     * @return void
     */
@@ -215,6 +201,22 @@ global without sharing class STG_InstallScript implements InstallHandler {
             Hierarchy_Settings__c orgSettings = Hierarchy_Settings__c.getOrgDefaults();
             if(orgSettings.Disable_Preferred_Email_Enforcement__c == null || orgSettings.Disable_Preferred_Email_Enforcement__c != true) {
                 orgSettings.Disable_Preferred_Email_Enforcement__c = true;
+            }
+            upsert orgSettings;
+        }
+    }
+
+     /*******************************************************************************************************
+    * @description Disables Preferred Phone handling when upgrading to 1.82
+    * @return void
+    */
+    
+    global static void disablePreferredPhoneEnforcement(Version previousVersion) {
+        if(previousVersion != null && previousVersion.compareTo(new Version(1,82)) < 0) {
+            UTIL_Debug.debug('***Upgrading to version 1.82');
+            Hierarchy_Settings__c orgSettings = UTIL_CustomSettingsFacade.getSettings();
+            if(orgSettings.Disable_Preferred_Phone_Enforcement__c == null || orgSettings.Disable_Preferred_Phone_Enforcement__c != true) {
+                orgSettings.Disable_Preferred_Phone_Enforcement__c = true;
             }
             upsert orgSettings;
         }
@@ -232,30 +234,6 @@ global without sharing class STG_InstallScript implements InstallHandler {
     }
 
     /*******************************************************************************************************
-    * @description: Popualte the Owned by Namespace field for HEDA owned triggers. We have to update Trigger
-    * handlers even if they are marked as user managed.
-    */
-    private static void populateNamespaceHandlers(){
-        // Populate filters for soql query
-        Set<String> objectTypes = new Set<String>();
-        Set<String> classNames = new Set<String>();
-
-        for(TDTM_Global_API.TdtmToken token : TDTM_Global_API.getDefaultTdtmConfig() ) {
-            objectTypes.add(token.targetObject);
-            classNames.add(token.className);
-        }
-
-        // Get HEDA trigger Handlers from the database
-        List<Trigger_Handler__c> hedaHandlers = [SELECT Id, Name, Owned_by_Namespace__c FROM Trigger_Handler__c WHERE Class__c in: classNames AND Object__c in: objectTypes LIMIT 5000];
-
-        for(Trigger_Handler__c t : hedaHandlers) {
-            t.Owned_by_Namespace__c = 'hed';
-        }
-
-        update hedaHandlers;
-    }
-
-    /*******************************************************************************************************
     * @description Populate Administrative record type custom setting when upgrading to 1.70
     * @return void
     */
@@ -266,6 +244,86 @@ global without sharing class STG_InstallScript implements InstallHandler {
                 orgSettings.Administrative_Account_Record_Type__c = UTIL_Describe.getAdminAccRecTypeID();
             }
             upsert orgSettings;
+        }
+    }
+    
+    /*******************************************************************************************************
+    * @description Populate Default Contact Language Fluency custom setting when upgrading to 1.75
+    * @return void
+    */
+    global static void setDefaultContactLanguageFluency(Version previousVersion) {
+        if(previousVersion != null && previousVersion.compareTo(new Version(1,75)) < 0) {
+            Hierarchy_Settings__c orgSettings = UTIL_CustomSettingsFacade.getSettings();
+            if(orgSettings.Default_Contact_Language_Fluency__c == null || orgSettings.Default_Contact_Language_Fluency__c == '') {
+                orgSettings.Default_Contact_Language_Fluency__c = Label.stgFluent;
+            }
+            upsert orgSettings;
+        }
+    }
+
+    /*******************************************************************************************************
+    * @description Schedules a class that implements the Schedulable interface, if it's not already scheduled.
+    * @param JobName The name to give the scheduled job.
+    * @param frequency The frequency to schedule the job at.
+    * @param className The class to schedule. Should implement the Schedulable interface.
+    * @return The ID of the scheduled job.
+    */
+    public static String scheduleJobIfNotScheduled(String JobName, String frequency, String className) {
+
+        //Check if the job is already scheduled - CronJobDetail is the parent and CronTrigger is the child
+        //Type '7' is for scheduled Apex
+        List<CronTrigger> scheduledJobs = [select Id, CronJobDetail.Id from CronTrigger
+                    where CronJobDetail.Name = :JobName and CronJobDetail.JobType = '7'];
+
+        if (scheduledJobs.size() == 0) {
+            Type classType = Type.forName(className);
+
+            if (classType != null) {
+               Object instance = classType.newInstance();
+               if (instance instanceof Schedulable) {
+                   return System.schedule(JobName, frequency, (Schedulable)instance);
+               }
+            }
+        }
+        return null;
+    }
+
+    /*******************************************************************************************************
+    * @description: Populate the Owned by Namespace field for EDA owned triggers. We have to update Trigger
+    * handlers even if they are marked as user managed.
+    */
+    private static void populateNamespaceHandlers() {
+        // Populate filters for soql query
+        Set<String> objectTypes = new Set<String>();
+        Set<String> classNames = new Set<String>();
+
+        for (TDTM_Global_API.TdtmToken token : TDTM_Global_API.getDefaultTdtmConfig()) {
+            objectTypes.add(token.targetObject);
+            classNames.add(token.className);
+        }
+
+        // Get EDA trigger Handlers from the database
+        List<Trigger_Handler__c> hedaHandlers = [SELECT Id, Name, Owned_by_Namespace__c FROM Trigger_Handler__c WHERE Class__c in: classNames AND Object__c in: objectTypes LIMIT 5000];
+
+        for (Trigger_Handler__c t : hedaHandlers) {
+            t.Owned_by_Namespace__c = 'hed';
+        }
+
+        update hedaHandlers;
+    }
+
+    @testVisible
+    private static Boolean sendTelemetryDataMethodCalled = false;
+
+    /*******************************************************************************************************
+    * @description Calls the UTIL_OrgTelemetry_BATCH class to collect information about the current org and 
+    * EDA setup information and sends it back to the EDA License Management Application to assist with better
+    * understanding of how our customers use our application.
+    */
+    private static void sendTelemetryData() {
+        sendTelemetryDataMethodCalled = true;
+        if (!Test.isRunningTest()) {
+            UTIL_OrgTelemetry.dispatchTelemetryBatchJob();
         }
     }
 }

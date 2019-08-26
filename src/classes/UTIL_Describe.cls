@@ -55,23 +55,28 @@ public class UTIL_Describe {
     * Gets describe maps for a new object
     ********************************************/
     static void fillMapsForObject(string objectName) {
+
         // get the object map the first time
-        if (gd==null) gd = Schema.getGlobalDescribe();
+        if (gd == null) {
+            gd = Schema.getGlobalDescribe();
+        } 
 
         // get the object description
         if (gd.containsKey(objectName)) {
 
-            if (!objectDescribes.containsKey(objectName))
+            if (!objectDescribes.containsKey(objectName)) {
                 objectDescribes.put(objectName, gd.get(objectName).getDescribe());
+            }    
         } else {
             throw new SchemaDescribeException('Invalid object name \'' + objectName + '\'');
         }
     }
 
-    /*******************************************
+    /********************************************
     * Gets a field map for a new object/field pair
-    ********************************************/
+    *********************************************/
     private static void fillFieldMapsForObject(string objectName, string fieldName) {
+
         // get the object map the first time
         fillMapsForObject(objectName);
 
@@ -80,7 +85,9 @@ public class UTIL_Describe {
             fieldTokens.put(objectName, objectDescribes.get(objectName).fields.getMap());
             fieldDescribes.put(objectName, new Map<String, Schema.DescribeFieldResult>());
         }
+
         if (!fieldDescribes.get(objectName).containsKey(fieldName)) {
+
             if (fieldTokens.get(objectName).containsKey(fieldName)) {
                 Schema.DescribeFieldResult dfr = fieldTokens.get(objectName).get(fieldName).getDescribe();
                 fieldDescribes.get(objectName).put(fieldName, dfr);
@@ -94,6 +101,7 @@ public class UTIL_Describe {
     * Gets all field maps for a new object
     ********************************************/
     static void fillFieldMapsForObject(string objectName) {
+
         // get the object map the first time
         fillMapsForObject(objectName);
 
@@ -105,7 +113,9 @@ public class UTIL_Describe {
 
         //Map<String, Schema.SObjectField> fieldsMap = objectDescribes.get(objectName).fields.getMap();
         if (fieldTokens.get(objectName).size() != fieldDescribes.get(objectName).size()) {
+
             for ( string fieldName : fieldTokens.get(objectName).keyset()) {
+
                 if (!fieldDescribes.get(objectName).containsKey(fieldName)) {
                     Schema.DescribeFieldResult dfr = fieldTokens.get(objectName).get(fieldName).getDescribe();
                     fieldDescribes.get(objectName).put(fieldName, dfr);
@@ -120,9 +130,10 @@ public class UTIL_Describe {
     private static void fillPicklistEntriesForObject(string objectName, string fieldName) {
         
         // make sure we have this field's schema mapped
-        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName))
+        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
-                
+        }
+
         // Check for picklist.
         if(getFieldType(objectName, fieldName) != 'PICKLIST') {
             throw new SchemaDescribeException('Invalid Selection. Field name \'' + fieldName + '\' for object name \'' + objectName + '\' is not a picklist.');
@@ -135,6 +146,7 @@ public class UTIL_Describe {
         
         //Create object to picklist map if needed.
         if(!fieldPicklistEntries.get(objectName).containsKey(fieldName)) {
+
             //Get the picklist values for the field
             List<Schema.PicklistEntry> picklistValues = getFieldDescribe(objectName, fieldName).getPicklistValues();
 
@@ -148,9 +160,11 @@ public class UTIL_Describe {
     * @return the new SObject
     */
     public static SObject getPrototypeObject(String objectName) {
+
         // make sure we have this object's schema mapped
-        if (!objectDescribes.containsKey(objectName))
+        if (!objectDescribes.containsKey(objectName)) {
             fillMapsForObject(objectName);
+        }
 
         return gd.get(objectName).newSObject();
     }
@@ -161,9 +175,11 @@ public class UTIL_Describe {
     * @return the Label of the object
     */
     public static string getObjectLabel(String objectName) {
+
         // make sure we have this object's schema mapped
-        if (!objectDescribes.containsKey(objectName))
+        if (!objectDescribes.containsKey(objectName)) {
             fillMapsForObject(objectName);
+        }
 
         return objectDescribes.get(objectName).getLabel();
     }
@@ -174,9 +190,11 @@ public class UTIL_Describe {
     * @return Schema.DescribeSObjectResult of the object
     */
     public static Schema.DescribeSObjectResult getObjectDescribe(String objectName) {
+
         // make sure we have this object's schema mapped
-        if (!objectDescribes.containsKey(objectName))
+        if (!objectDescribes.containsKey(objectName)) {
             fillMapsForObject(objectName);
+        }
 
         return objectDescribes.get(objectName);
     }
@@ -188,17 +206,23 @@ public class UTIL_Describe {
     * @return true if the Id is for the given object type, false otherwise.
     */
     public static boolean isObjectIdThisType(Id salesforceId, String objectName) {
+
         // make sure we have this object's schema mapped
-        if (!objectDescribes.containsKey(objectName))
+        if (!objectDescribes.containsKey(objectName)) {
             fillMapsForObject(objectName);
+        }
 
         // now grab the requested id prefix
         boolean ret = false;
+
         if (salesforceId != null) {
             string prefix = objectDescribes.get(objectName).getKeyPrefix();
-            if (prefix != null)
+
+            if (prefix != null) {
                 ret = ((string)(salesforceId)).startsWith(prefix);
+            }    
         }
+
         return ret;
     }
 
@@ -226,8 +250,9 @@ public class UTIL_Describe {
     public static string getFieldType(String objectName, String fieldName) {
 
         // make sure we have this field's schema mapped
-        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName))
+        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
+        }
 
         Schema.DescribeFieldResult dfr = fieldDescribes.get(objectName).get(fieldName);
         return dfr.getType().name();
@@ -241,12 +266,14 @@ public class UTIL_Describe {
     * @return Displaytype the Displaytype of the field
     */
     public static Schema.Displaytype getFieldDisplaytype(String objectName, String fieldName) {
+
         // fields in our own package must not have their prefix for the Describe Field Map
         fieldName = UTIL_Namespace.StrTokenRemoveNSPrefix(fieldName);
 
         // make sure we have this field's schema mapped
-        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName))
+        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
+        }
 
         Schema.DescribeFieldResult dfr = fieldDescribes.get(objectName).get(fieldName);
         return dfr.getType();
@@ -259,14 +286,16 @@ public class UTIL_Describe {
     * PICKLIST, MULTIPICKLIST, CURRENCY, DOUBLE, INTEGER, PERCENT, PHONE, EMAIL
     * @return DescribeFieldResult Map of DescribeFieldResult
     */
+    
     public static Map<String, Schema.DescribeFieldResult> getFieldsOfType(String objectName, String type) {
 
+        
         Map<String, Schema.DescribeFieldResult> allFields = UTIL_Describe.getAllFieldsDescribe( objectName );
         Map<String, Schema.DescribeFieldResult> fields = new Map<String, Schema.DescribeFieldResult>();
 
         for(String fieldLabel: allFields.keySet()) {
             Schema.DescribeFieldResult field = allFields.get(fieldLabel);
-     
+     		
             if (String.valueOf( field.getType() ) == type) {
                 fields.put(field.getName(), field );
             }
@@ -284,8 +313,9 @@ public class UTIL_Describe {
     public static Schema.DescribeFieldResult getFieldDescribe(String objectName, String fieldName) {
 
         // make sure we have this field's schema mapped
-        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName))
+        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
+        }
 
         Schema.DescribeFieldResult dfr = fieldDescribes.get(objectName).get(fieldName);
         return dfr;
@@ -298,12 +328,14 @@ public class UTIL_Describe {
     * @return string the label of the field
     */
     public static string getFieldLabel(String objectName, String fieldName) {
+
         // fields in our own package must not have their prefix for the Describe Field Map
         fieldName = UTIL_Namespace.StrTokenRemoveNSPrefix(fieldName);
 
         // make sure we have this field's schema mapped
-        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName))
+        if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
             fillFieldMapsForObject(objectName, fieldName);
+        }
 
         Schema.DescribeFieldResult dfr = fieldDescribes.get(objectName).get(fieldName);
         return dfr.getLabel();
@@ -344,13 +376,16 @@ public class UTIL_Describe {
     * @return boolean whether the field exists
     */
     public static boolean isValidField(String objectName, String fieldName) {
+
         // fields in our own package must not have their prefix for the Describe Field Map
         fieldName = UTIL_Namespace.StrTokenRemoveNSPrefix(fieldName);
 
         // make sure we have this field's schema mapped
         try {
-            if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName))
+
+            if (!fieldDescribes.containsKey(objectName) || !fieldDescribes.get(objectName).containsKey(fieldName)) {
                 fillFieldMapsForObject(objectName, fieldName);
+            }
 
             Schema.DescribeFieldResult dfr = fieldDescribes.get(objectName).get(fieldName);
             return dfr != null;
@@ -367,12 +402,14 @@ public class UTIL_Describe {
     */
     public static boolean canDisplaytypesCopy(Schema.Displaytype dtSrc, Schema.Displaytype dtTgt) {
 
-        if (dtSrc == dtTgt)
+        if (dtSrc == dtTgt) {
            return true;
+        }
 
         // date can go to datetime
-        if (dtSrc == Schema.Displaytype.Date && dtTgt == Schema.Displaytype.DateTime)
+        if (dtSrc == Schema.Displaytype.Date && dtTgt == Schema.Displaytype.DateTime) {
            return true;
+        }
 
         // numbers can implictly cast to other numbers
         if ((dtSrc == Schema.Displaytype.Currency ||
@@ -387,8 +424,9 @@ public class UTIL_Describe {
         }
 
         // text can go to longer text
-        if (dtSrc == Schema.Displaytype.String && dtTgt == Schema.Displaytype.TextArea)
+        if (dtSrc == Schema.Displaytype.String && dtTgt == Schema.Displaytype.TextArea) {
             return true;
+        }
 
         return false;
     }
@@ -399,22 +437,27 @@ public class UTIL_Describe {
     * @param strFS the name of the object's field set
     * @return a list of strings of field names in the field set
     */
+
     // utility to return a list of strings from a field set.
     public static list<string> listStrFromFieldSet(string strObject, string strFS) {
-        list<string> listStrFields = new list<string>();
+        List<string> listStrFields = new List<string>();
         Schema.SObjectType targetType = Schema.getGlobalDescribe().get(strObject);
         Schema.DescribeSObjectResult d = targetType.getDescribe();
         Schema.FieldSet fs = d.fieldSets.getMap().get(strFS);
+
         if (fs == null) {
             return null;
         } else {
+
             for(Schema.FieldSetMember f : fs.getFields()) {
+
                 if (f.getFieldPath().contains('.')) {
                     throw (new SchemaDescribeException('Related field \'' + f.getFieldPath() + '\' not supported ' +
                         'in field set \'' + strFS + '\'.  You can only include fields directly on object \'' + strObject + '\'.'));
                 }
                 listStrFields.add(f.getFieldPath());
             }
+
             return listStrFields;
         }
     }
@@ -427,9 +470,11 @@ public class UTIL_Describe {
     */
     public static string strFieldNamesFromFieldSet(string strObject, string strFS) {
         string strFields = '';
+
         for (string str : listStrFromFieldSet(strObject, strFS)) {
             strFields += str + ',';
         }
+
         return strFields.substring(0, strFields.length()-1);
     }
     
@@ -438,7 +483,6 @@ public class UTIL_Describe {
      * SObjectType and field, keyed by picklist label with a value of picklist value.
      * @param objectName Name of the object to retrieve picklist values for.
      * @param fieldName Name of the field to retrieve picklist values for.
-     * False if we want it to be the friendly name.
      * @return Map<String, String> Map of picklist labels to values for the object and field specified.
      */
     @AuraEnabled
@@ -446,12 +490,67 @@ public class UTIL_Describe {
         Map<String, String> picklistValues = new Map<String, String>();
         
         for(Schema.PicklistEntry picklistEntry : getFieldPicklistEntries(objectName, fieldName)) {
+
             if(picklistEntry.isActive()) {
                 picklistValues.put(picklistEntry.getLabel(), picklistEntry.getValue());
             }
         }
 
         return picklistValues;
+    }
+    
+    /*********************************************************************************************************
+     * @description Returns a map of active, user-available fields labels and API name for a given
+     * SObjectType and field type, keyed by  label with a value of api name.
+     * @param objectName Name of the object to retrieve values for.
+     * @param type data type of the fields to retrieve values for.
+     * @return Map<String, String> Map of labels to api name for the object and field type specified.
+     *****/
+    @AuraEnabled
+    public static Map<String, String> getFieldsOfTypeAura(String objectName, String type) {
+		
+        //API name and Schema of field
+        Map<String, Schema.DescribeFieldResult> allFields = UTIL_Describe.getAllFieldsDescribe( objectName );
+        Map<String, String> fields = new Map<String, String>();
+        for(String fieldAPI: allFields.keySet()) {
+            Schema.DescribeFieldResult field = allFields.get(fieldAPI);
+     
+            if (String.valueOf( field.getType() ) == type) {
+                 fields.put(field.getLabel(), fieldAPI);
+            }
+        }
+	
+        return fields;
+    }
+    
+
+    /*********************************************************************************************************
+     * @description Returns field API name for a given object and field label
+     * @param objectName Name of the object to retrieve values for.
+     * @param fieldLabel Label of the field
+     * @return String API Name of the field retrieved
+     *****/
+
+    public static String getFieldAPIName (String objectName, String fieldLabel) {
+        
+        // get the object map the first time
+        if (gd == null) {
+            gd = Schema.getGlobalDescribe();
+        }
+        
+        SObjectType objType = gd.get(objectName);
+        Map<String, Schema.SObjectField> allFields = objType.getDescribe().fields.getMap();
+        String fieldAPIName = '';    
+        for (String strField: allFields.keySet()) {
+            SObjectField fieldAPI = allFields.get(strField);
+            Schema.DisplayType fielddataType = fieldAPI.getDescribe().getType();
+            if(fieldLabel == fieldAPI.getDescribe().getlabel()) {
+                fieldAPIName = strField;
+                break;
+            }
+        }   
+        
+        return fieldAPIName;
     }
 
     /*******************************************************************************************************
@@ -492,6 +591,7 @@ public class UTIL_Describe {
      * of available record types for object specified.
      */
     private static Map<String, Id> getRecTypesMap(String objectName, Boolean devName) {
+
         if(mapRecordTypes.get(objectName) == null) {
             Map<String, Id> recTypes = new Map<String, Id>();
 
@@ -503,6 +603,7 @@ public class UTIL_Describe {
             String soql = 'SELECT Id, Name, DeveloperName FROM RecordType ' + 'WHERE SObjectType = \''
                           + String.escapeSingleQuotes(obj.getName()) + '\' ' + 'AND IsActive = TRUE';
             List<SObject> results;
+
             try {
                 results = Database.query(soql);
             } catch (Exception ex) {
@@ -513,9 +614,12 @@ public class UTIL_Describe {
             Map<Id, Schema.RecordTypeInfo> recordTypeInfos = obj.getRecordTypeInfosByID();
 
             for (SObject rt : results) {
+
                 // Check RecordType IS available for the running user
                 if (!Test.isRunningTest()) {
+
                     if (recordTypeInfos.get(rt.Id).isAvailable()) {
+
                         if(devName) {
                             recTypes.put(String.valueOf(rt.get('DeveloperName')), rt.Id);
                         } else {
@@ -525,6 +629,7 @@ public class UTIL_Describe {
                 // We don't want our tests to depend on the profile configuration in the org. Otherwise tests
                 // might fail just because the user running them does not have certain record types assigned.
                 } else {
+
                     if(devName) {
                         recTypes.put(String.valueOf(rt.get('DeveloperName')), rt.Id);
                     } else {
@@ -534,6 +639,7 @@ public class UTIL_Describe {
             }
             mapRecordTypes.put(objectName, recTypes);
         }
+
         return mapRecordTypes.get(objectName);
     }
 
@@ -544,7 +650,9 @@ public class UTIL_Describe {
 
     public static String getAdminAccRecTypeID() {
         String recTypeId = getRecTypesMapByDevName('Account').get('Administrative');
+
         if(String.isBlank(recTypeId) && Test.isRunningTest()) {
+
             if(getRecTypesMapByDevName('Account').values().size() > 0) {
                 return getRecTypesMapByDevName('Account').values()[0];
             } else {
@@ -561,11 +669,14 @@ public class UTIL_Describe {
     */
     public static String getHhAccRecTypeID() {
         String recTypeId = getRecTypesMapByDevName('Account').get('HH_Account');
+
         if(String.isBlank(recTypeId) && Test.isRunningTest()) {
+
             if(getRecTypesMapByDevName('Account').values().size() > 1) {
                 return getRecTypesMapByDevName('Account').values()[1];
+            } else {
+                return null;
             }
-            else return null;
         } else {
             return recTypeId;
         }
@@ -577,7 +688,9 @@ public class UTIL_Describe {
      */
 	public static String getBizAccRecTypeID() {
 	    String recTypeId = getRecTypesMapByDevName('Account').get('Business_Organization');
+
 	    if(String.isBlank(recTypeId) && Test.isRunningTest()) {
+
 	        if(getRecTypesMapByDevName('Account').values().size() > 2) {
                 return getRecTypesMapByDevName('Account').values()[2];
             } else {
@@ -594,7 +707,9 @@ public class UTIL_Describe {
     */
     public static String getDepAccRecTypeID() {
         String recTypeId = getRecTypesMapByDevName('Account').get('Department');
+
         if(String.isBlank(recTypeId) && Test.isRunningTest()) {
+
             if(getRecTypesMapByDevName('Account').values().size() > 2) {
                 return getRecTypesMapByDevName('Account').values()[2];
             } else {
@@ -612,7 +727,9 @@ public class UTIL_Describe {
      */
     public static String getAcademicAccRecTypeID() {
         String recTypeId = getRecTypesMapByDevName('Account').get('Academic_Program');
+
         if(String.isBlank(recTypeId) && Test.isRunningTest()) {
+
             if(getRecTypesMapByDevName('Account').values().size() > 2) {
                 return getRecTypesMapByDevName('Account').values()[2];
             } else {
@@ -631,7 +748,9 @@ public class UTIL_Describe {
     public static String getDefaultConnectionRecTypeID() {
         Map<String, Id> recTypes = getRecTypesMapByDevName(UTIL_Namespace.StrTokenNSPrefix('Course_Enrollment__c'));
         String recTypeId = recTypes.get('Default');
+
         if(String.isBlank(recTypeId) && Test.isRunningTest()) {
+
             if(recTypes.values().size() > 2) {
                 return recTypes.values()[2];
             } else {
@@ -648,10 +767,13 @@ public class UTIL_Describe {
      */
     public static String getFacultyConnectionRecType() {
         String recTypeId = UTIL_CustomSettingsFacade.getSettings().Faculty_RecType__c;
+
         if(Test.isRunningTest() && String.isBlank(recTypeId)) {
             Map<String, Id> recTypes = getRecTypesMapByDevName(UTIL_Namespace.StrTokenNSPrefix('Course_Enrollment__c'));
             recTypeId = recTypes.get('Faculty');
+
             if (String.isBlank(recTypeId)) {
+
                 if(recTypes.values().size() > 0) {
                     return recTypes.values()[0];
                 } else {
@@ -659,6 +781,7 @@ public class UTIL_Describe {
                 }
             }
         }
+
         return recTypeId;
     }
 
@@ -668,10 +791,13 @@ public class UTIL_Describe {
      */
     public static String getStudentConnectionRecType() {
         String recTypeId = UTIL_CustomSettingsFacade.getSettings().Student_RecType__c;
+        
         if(Test.isRunningTest() && String.isBlank(recTypeId)) {
             Map<String, Id> recTypes = getRecTypesMapByDevName(UTIL_Namespace.StrTokenNSPrefix('Course_Enrollment__c'));
             recTypeId = recTypes.get('Student');
+
             if (String.isBlank(recTypeId)) {
+
                 if(recTypes.values().size() > 1) {
                     return recTypes.values()[1];
                 } else {
@@ -679,6 +805,7 @@ public class UTIL_Describe {
                 }
             }
         }
+
         return recTypeId;
     }
 }

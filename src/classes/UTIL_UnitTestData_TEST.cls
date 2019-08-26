@@ -35,7 +35,37 @@
 * @description Provides automated generation of unit test data for tests throughout the org 
 */
 @isTest
-public class UTIL_UnitTestData_TEST { 
+public class UTIL_UnitTestData_TEST {
+
+    public static List<SObject> sObjectsToUpdate;
+
+    /*********************************************************************************************************
+    * @description Provides a simple TDTM implementation that does nothing unless the static List of 
+    * sObjectsToUpdate is not null.
+    * The main purpose of this test TDTM class is to test re-entrancy scenarios that might result from a custom
+    * TDTM class. For example, the AFFL_AccRecordType_TEST class uses this class as an AfterInsert and AfterUpdate
+    * Contact TDTM trigger that updates the account record that initially fired the AFFL_AccRecordType_TDTM logic.
+    **********************************************************************************************************/
+    public class Test_TDTM extends TDTM_Runnable {
+
+        /*******************************************************************************************************
+        * @description Does nothing unless the static List of sObjectsToUpdate is not null.
+        * @param listNew the list of SObjects from trigger new.
+        * @param listOld the list of SObjects from trigger old.
+        * @param triggerAction which trigger event (BeforeInsert, AfterInsert, etc.).
+        * @param objResult the describe for the SObject.
+        * @return dmlWrapper
+        ********************************************************************************************************/
+        public override TDTM_Runnable.DmlWrapper run(List<SObject> newList, List<SObject> oldList, 
+                                                    TDTM_Runnable.Action triggerAction, Schema.DescribeSObjectResult objResult) {
+            UTIL_Debug.debug('****Entered the Test_TDTM Trigger');
+            if (sObjectsToUpdate != null) {
+                UTIL_Debug.debug('****Updating objects: ' + sObjectsToUpdate);
+                update sObjectsToUpdate;
+            }
+            return new TDTM_Runnable.DmlWrapper();
+        }
+    }
     
     public static Contact getContact() {
     	Contact contact =  new Contact(FirstName = 'Test', LastName = 'Testerson' + Datetime.now().getTime(), 
@@ -90,7 +120,7 @@ public class UTIL_UnitTestData_TEST {
     /*********************************************************************************************************
     * @description Initializes (but not inserts) N new Address objects.
     * @param addrCount the number of Address objects to create
-    * @return  void
+    * @return The list of Address__c objects
     **********************************************************************************************************/
     public static List<Address__c> getMultipleTestAddresses(Integer addrCount) {
         List<Address__c> addrs = new List<Address__c>();
@@ -111,9 +141,9 @@ public class UTIL_UnitTestData_TEST {
     
     /*********************************************************************************************************
     * @description Sets up common test data for Account Addresses tests.
-    * @param accCount Number of  Accounts to create.
+    * @param accCount Number of Accounts to create.
     * @param recTypeID The record type to use when creating Accounts.
-    * @return  void
+    * @return The instance of AccsWithAddrs inner class with lists of Accounts and Address__c objects
     **********************************************************************************************************/    
     public static AccsWithAddrs createTestAccsAddrs(Integer accCount, String recTypeID) { 
         ADDR_Contact_TEST.turnOffAllAddrTriggers();
@@ -163,8 +193,8 @@ public class UTIL_UnitTestData_TEST {
     
     /*********************************************************************************************************
     * @description Sets up common test data for Contact Addresses tests.
-    * @param contactCount Number of  Contacts to create.
-    * @return  void
+    * @param contactCount Number of Contacts to create.
+    * @return The instance of ContactsWithAddrs inner class with lists of Contacts and Address__c objects
     **********************************************************************************************************/  
     public static ContactsWithAddrs createTestContactsAddrs(Integer contactCount) {
         ADDR_Contact_TEST.turnOffAllAddrTriggers();
@@ -221,7 +251,7 @@ public class UTIL_UnitTestData_TEST {
     *    - will also setup the default Account Processor to be HH Accounts
     * @param accCount the number of Household Accounts to create
     * @param contactCount the number of Contacts to create per Household
-    * @return  void
+    * @return The instance of ContactsAccsWithAddrs inner class with lists of Contacts, Accounts, and Address__c objects
     **********************************************************************************************************/
     public static ContactsAccsWithAddrs createTestConsAccsAddrs(Integer accCount, Integer contactCount, String recTypeID) {
         ADDR_Contact_TEST.turnOffAllAddrTriggers();
@@ -296,6 +326,7 @@ public class UTIL_UnitTestData_TEST {
     * @description Groups a list of Accounts, a list of Contacts, and a list of Addresses so they can be returned 
     * from a method together.
     **********************************************************************************************************/ 
+    // TODO - possible tech debt: can we get rid of the other two public inner classes and just use this one?
     public class ContactsAccsWithAddrs {
         public List<Account> accs { public get; public set; }
         public List<Contact> contacts { public get; public set; }
@@ -303,7 +334,7 @@ public class UTIL_UnitTestData_TEST {
     }
 
     /*********************************************************************************************************
-    * @description Create an error record happens now
+    * @description Create an error record for the current system time.
     **********************************************************************************************************/
     public static Error__c getError() {
         Error__c error = new Error__c(Datetime__c = System.now());
@@ -311,7 +342,7 @@ public class UTIL_UnitTestData_TEST {
     }
 
     /*********************************************************************************************************
-    * @description Create a list of error records happen now
+    * @description Create a list of error records for the current system time.
     **********************************************************************************************************/
     public static List<Error__c> getListOfErrors(Integer n) {
         List<Error__c> errors = new List<Error__c>();
@@ -322,7 +353,7 @@ public class UTIL_UnitTestData_TEST {
     }
   
     /*********************************************************************************************************
-    *@description Get a single Program Plan
+    * @description Get a single Program Plan
     **********************************************************************************************************/
     public static Program_Plan__c getProgramPlan(){
         Program_Plan__c programPlan = new Program_Plan__c();
@@ -331,8 +362,8 @@ public class UTIL_UnitTestData_TEST {
     }
 
     /*********************************************************************************************************
-    *@description Get a list of Program Plans
-    *@param n the number of Program Plans to create
+    * @description Get a list of Program Plans
+    * @param n the number of Program Plans to create
     **********************************************************************************************************/
     public static List<Program_Plan__c> getMultipleTestProgramPlans(Integer n) {
         List<Program_Plan__c> programPlans = new List<Program_Plan__c>();
@@ -341,8 +372,9 @@ public class UTIL_UnitTestData_TEST {
         }
         return programPlans;
     } 
+
     /*********************************************************************************************************
-    *@description Get a single Plan Requirement
+    * @description Get a single Plan Requirement
     **********************************************************************************************************/
     public static Plan_Requirement__c getPlanRequirement(){
         Plan_Requirement__c planRequirement = new Plan_Requirement__c();
@@ -351,8 +383,8 @@ public class UTIL_UnitTestData_TEST {
     }
 
     /*********************************************************************************************************
-    *@description Get a list of Plan Requirements
-    *@param n the number of Plan Requirements to create
+    * @description Get a list of Plan Requirements
+    * @param n the number of Plan Requirements to create
     **********************************************************************************************************/
     public static List<Plan_Requirement__c> getMultipleTestPlanRequirements(Integer n) {
         List<Plan_Requirement__c> planRequirements = new List<Plan_Requirement__c>();
@@ -363,7 +395,7 @@ public class UTIL_UnitTestData_TEST {
     }
 
     /*********************************************************************************************************
-    *@description Get a single Program Enrollment
+    * @description Get a single Program Enrollment
     **********************************************************************************************************/
     public static Program_Enrollment__c getProgramEnrollment(Id accId){
         Program_Enrollment__c programEnrollment = new Program_Enrollment__c();
@@ -372,8 +404,8 @@ public class UTIL_UnitTestData_TEST {
     }
 
     /*********************************************************************************************************
-    *@description Get a list of Program Enrollments
-    *@param n the number of Program Enrollments to create
+    * @description Get a list of Program Enrollments
+    * @param n the number of Program Enrollments to create
     **********************************************************************************************************/
     public static List<Program_Enrollment__c> getMultipleTestProgramEnrollments(Integer n, Id accId) {
         List<Program_Enrollment__c> programEnrollments = new List<Program_Enrollment__c>();
@@ -381,5 +413,117 @@ public class UTIL_UnitTestData_TEST {
             programEnrollments.add(getProgramEnrollment(accId));
         }
         return programEnrollments;
+    }
+
+    /*******************************************************************************************************
+    * @description Inserts a new Language record for testing. 
+    * @param name The name of the Language record.
+    * @return The inserted Language record.
+    ********************************************************************************************************/
+    public static Language__c createLanguage(String name) {
+        Language__c languageToInsert = new Language__c(Name = name);
+        insert languageToInsert;
+        return languageToInsert;
+    }
+
+    /*******************************************************************************************************
+    * @description Inserts a new Contact Language record for testing. 
+    * @param languageId The Language associated to the Contact Language record.
+    * @param contactId The Contact associated to the Contact Language record.
+    * @param isPrimaryLanguage Signifies whether or not the Contact Language should be marked as the Primary Language.
+    * @return The inserted Contact Language record.
+    ********************************************************************************************************/
+    public static Contact_Language__c createContactLanguage(Id languageId, Id contactId, Boolean isPrimaryLanguage) {
+        Contact_Language__c contactLanguageToInsert = 
+            new Contact_Language__c(Language__c = languageId, Contact__c = contactId, Primary_Language__c = isPrimaryLanguage);
+        insert contactLanguageToInsert;
+        return contactLanguageToInsert;
+    }
+
+    /*********************************************************************************************************
+    * @description Inserts a new Course Offering record for testing.
+    * @param courseId The Course to which the Course Offering will be associated. If blank, a new Course record
+    * will be inserted.
+    * @param termId The Term to which the Course Offering will be associated. If blank, a new Term record will be
+    * inserted.
+    * @return The inserted Course Offering record.
+    **********************************************************************************************************/
+    public static Course_Offering__c createCourseOffering(Id courseId, Id termId) {
+        Account acct;
+        if (courseId == null || termId == null) {
+            acct = UTIL_UnitTestData_API.getMultipleTestAccounts(1, UTIL_Describe_API.getAcademicAccRecTypeID())[0];
+            insert acct;
+        }
+        
+        if (courseId == null) {
+            Course__c course = new Course__c(Name = 'ECON 101', Account__c = acct.Id);
+            insert course;
+            courseId = course.Id;
+        }
+
+        if (termId == null) {
+            Term__c term = new Term__c(Name = '2019-2020 School Year', Account__c = acct.Id);
+            insert term;
+            termId = term.Id;
+        }
+
+        Course_Offering__c courseOffering = new Course_Offering__c(Name = 'ECON-101-19-01', Course__c = courseId, Term__c = termId);
+        insert courseOffering;
+
+        return courseOffering;
+    }
+
+    /*********************************************************************************************************
+    * @description Inserts a new Time Block record for testing.
+    * @param startTime The Start Time for the Time Block.
+    * @param endTime The End Time for the Time Block.
+    * @return The inserted Time Block record.
+    **********************************************************************************************************/
+    public static Time_Block__c createTimeBlock(Time startTime, Time endTime) {
+        Time_Block__c timeBlock = new Time_Block__c(Start_Time__c = startTime, End_Time__c = endTime);
+        insert timeBlock;
+
+        return timeBlock;
+    }
+    
+    /*********************************************************************************************************
+    * @description Gets a Course Connection for testing.
+    * @return The Course Connection record.
+    **********************************************************************************************************/
+    public static Course_Enrollment__c getCourseConnection() {
+        Course_Enrollment__c courseConnection = new Course_Enrollment__c();
+        return courseConnection;
+    }
+
+    /*********************************************************************************************************
+    * @description Gets a Course Connection for testing.
+    * @param contactId The Contact of the Course Connection.
+    * @param courseOfferingId The Course Offering of the Course Connection.
+    * @return The Course Connection record.
+    **********************************************************************************************************/
+    public static Course_Enrollment__c getCourseConnection(Id contactId, Id courseOfferingId) {
+        Course_Enrollment__c courseConnection = new Course_Enrollment__c(
+            Contact__c = contactId, 
+            Course_Offering__c = courseOfferingId
+        );
+        return courseConnection;
+    }
+    
+    /*********************************************************************************************************
+    * @description Gets a Attendance Event for testing.
+    * @return The Attendance Event record.
+    **********************************************************************************************************/
+    public static Attendance_Event__c getAttendanceEvent() {
+        Attendance_Event__c attd = new Attendance_Event__c();
+        return attd;
+    }
+
+    /*********************************************************************************************************
+    * @description Gets a Facility for testing.
+    * @return The Facility record.
+    **********************************************************************************************************/
+    public static Facility__c getFacility() {
+        Facility__c facility = new Facility__c(Name = 'Test Facility ' + Datetime.now().getTime());
+        return facility;
     }
 }

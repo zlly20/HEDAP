@@ -31,7 +31,7 @@
 /**
 * @author Salesforce.org
 * @date 2014
-* @group ErrorHandling
+* @group Error Handling
 * @group-content ../../ApexDocContent/ErrorHandling.htm
 * @description Helps determine if errors occurred during the DML operations performed during the transaction, and with
 * the necessary storing and notification of these errors.
@@ -165,7 +165,7 @@ public class ERR_Handler {
     /*******************************************************************************************************
     * @description Creates an error record from an exception, stores it in the database (if enabled), and sends error
     *              notifications (if enabled).
-                   This method should be used from inside the HEDA package, instead of the same one with that same name
+                   This method should be used from inside the EDA package, instead of the same one with that same name
                    that takes a String instead of an Enum as the second parameter.
     * @param e Exception to create error record from.
     * @return context The context the exception was raised on.

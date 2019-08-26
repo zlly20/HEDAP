@@ -1,10 +1,8 @@
 /*
     Copyright (c) 2014, Salesforce.org
     All rights reserved.
-
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
-
     * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +11,6 @@
     * Neither the name of Salesforce.org nor the names of
       its contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
-
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
     "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
     LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,7 +29,7 @@
 * @date 2014
 * @group Settings
 * @group-content ../../ApexDocContent/Settings.htm
-* @description Test Class for the Install Script for the HEDA package.
+* @description Test Class for the Install Script for the EDA package.
 */
 @isTest
 public with sharing class STG_InstallScript_TEST {
@@ -44,7 +41,7 @@ public with sharing class STG_InstallScript_TEST {
             LastName = 'Test',
             Email = 'joe@domain.com'
         );
-        TDTM_ProcessControl.setRecursionFlag(TDTM_ProcessControl.registeredTrigger.CON_Preferred_TDTM, false);// need to turn off the trigger for this test
+        TDTM_ProcessControl.setRecursionFlag(TDTM_ProcessControl.registeredTrigger.CON_Preferred_TDTM, false); // need to turn off the trigger for this test
         insert cont;
 
         TDTM_ProcessControl.setRecursionFlag(TDTM_ProcessControl.registeredTrigger.CON_Preferred_TDTM, true); // back on for install script
@@ -54,20 +51,26 @@ public with sharing class STG_InstallScript_TEST {
         Test.testInstall(new STG_InstallScript(), null);
         Test.stopTest();
 
-        List<Affl_Mappings__c> mappings = [select Account_Record_Type__c, Primary_Affl_Field__c from Affl_Mappings__c];
+        List<Affl_Mappings__c> mappings = [SELECT Account_Record_Type__c, Primary_Affl_Field__c FROM Affl_Mappings__c];
         System.assertEquals(6, mappings.size());
 
-        List<Trigger_Handler__c> tdtmHandlers = [select Name, Owned_by_Namespace__c from Trigger_Handler__c];
+        List<Trigger_Handler__c> tdtmHandlers = [SELECT Name, Owned_by_Namespace__c FROM Trigger_Handler__c];
         System.assertEquals(TDTM_DefaultConfig.getDefaultRecords().size(), tdtmHandlers.size());
 
-        for(Trigger_Handler__c h:tdtmHandlers){
+        for (Trigger_Handler__c h : tdtmHandlers) {
             // Verify Owned by namespace field set on first item in list
             System.assertEquals('hed', h.Owned_by_Namespace__c);
         }
 
+        // Verify defaults are set on install
+        Hierarchy_Settings__c orgSettings = UTIL_CustomSettingsFacade.getSettings();
+        System.assertEquals(Label.stgFluent, orgSettings.Default_Contact_Language_Fluency__c);
+
         // Making sure the Batch process ran successfully
         Contact cont2 = [SELECT Id, Name, Email, AlternateEmail__c, Preferred_Email__c FROM Contact WHERE Id =: cont.Id];
         System.assertEquals(cont2.AlternateEmail__c, cont2.Email);
+
+        System.assertEquals(false, STG_InstallScript.sendTelemetryDataMethodCalled, 'Did not expect the EDA Telemetry data method to be called on install.');
 	}
 
     @isTest
@@ -76,7 +79,7 @@ public with sharing class STG_InstallScript_TEST {
 
         // Make Modifications to store in the database.
         List<Trigger_Handler__c> previousDefaults = TDTM_DefaultConfig.getDefaultRecords();
-        for(Trigger_Handler__c h:previousDefaults){
+        for (Trigger_Handler__c h : previousDefaults) {
             h.Trigger_Action__c = null;
         }
         insert previousDefaults;
@@ -86,13 +89,15 @@ public with sharing class STG_InstallScript_TEST {
         Test.testInstall(new STG_InstallScript(), new Version(1,41), true);
         Test.stopTest();
 
-        List<Trigger_Handler__c> tdtmHandlers = [select Name, Owned_by_Namespace__c, Trigger_Action__c from Trigger_Handler__c WHERE Owned_by_Namespace__c = 'hed'];
+        List<Trigger_Handler__c> tdtmHandlers = [SELECT Name, Owned_by_Namespace__c, Trigger_Action__c FROM Trigger_Handler__c WHERE Owned_by_Namespace__c = 'hed'];
 
-        for(Trigger_Handler__c h:tdtmHandlers){
+        for (Trigger_Handler__c h : tdtmHandlers) {
             // Verify Owned by namespace field set on first item in list
             System.assertEquals('hed', h.Owned_by_Namespace__c);
             System.assertNotEquals(null, h.Trigger_Action__c); // Should not be null
         }
+
+        System.assertEquals(true, STG_InstallScript.sendTelemetryDataMethodCalled, 'Expected the EDA Telemetry data method to be called on push upgrade.');
     }
 
     @isTest
@@ -111,12 +116,12 @@ public with sharing class STG_InstallScript_TEST {
         insert newHandler;
 
         // Verify handlers are not added to the DB
-        List<Trigger_Handler__c> initialHandlers = [select Name, Owned_by_Namespace__c from Trigger_Handler__c WHERE Owned_by_Namespace__c = 'hed'];
+        List<Trigger_Handler__c> initialHandlers = [SELECT Name, Owned_by_Namespace__c FROM Trigger_Handler__c WHERE Owned_by_Namespace__c = 'hed'];
         System.assertEquals(0, initialHandlers.size());
 
         // Remove Namespace from all records
         List<Trigger_Handler__c> previousDefaults = TDTM_DefaultConfig.getDefaultRecords();
-        for(Trigger_Handler__c h:previousDefaults){
+        for (Trigger_Handler__c h : previousDefaults) {
             h.Owned_by_Namespace__c = null;
         }
         insert previousDefaults;
@@ -127,12 +132,12 @@ public with sharing class STG_InstallScript_TEST {
         Test.stopTest();
 
         // They should now all have the 'hed' as the namespace
-        List<Trigger_Handler__c> tdtmHandlers = [select Name, Owned_by_Namespace__c from Trigger_Handler__c WHERE Owned_by_Namespace__c = 'hed'];
+        List<Trigger_Handler__c> tdtmHandlers = [SELECT Name, Owned_by_Namespace__c FROM Trigger_Handler__c WHERE Owned_by_Namespace__c = 'hed'];
 
         System.assertEquals(previousDefaults.size(), tdtmHandlers.size());
 
         // User handlers should not be touched
-        List<Trigger_Handler__c> userHandlers = [select Name, Owned_by_Namespace__c from Trigger_Handler__c WHERE Class__c = 'Contact_Update' AND Object__c = 'Contact'];
+        List<Trigger_Handler__c> userHandlers = [SELECT Name, Owned_by_Namespace__c FROM Trigger_Handler__c WHERE Class__c = 'Contact_Update' AND Object__c = 'Contact'];
         System.assertEquals(1, userHandlers.size());
         System.assertEquals(null, userHandlers[0].Owned_by_Namespace__c);
     }
@@ -154,7 +159,7 @@ public with sharing class STG_InstallScript_TEST {
 
         // Remove Namespace to simulate pre 1.38 status, and user disabled
         List<Trigger_Handler__c> userModifiedDefaults = TDTM_DefaultConfig.getDefaultRecords();
-        for(Trigger_Handler__c h:userModifiedDefaults){
+        for (Trigger_Handler__c h:userModifiedDefaults) {
             h.Owned_by_Namespace__c = null;
             h.Active__c = false;
             h.User_Managed__c = true;
@@ -166,10 +171,10 @@ public with sharing class STG_InstallScript_TEST {
 
         List<Trigger_Handler__c> tdtmHandlers = [SELECT Id, Name, Owned_by_Namespace__c, Active__c, User_Managed__c, Class__c FROM Trigger_Handler__c];
 
-        // Verify the number of default records didn't change. We subtract one because the custom non-HEDAtriiger handler should still exist
+        // Verify the number of default records didn't change. We subtract one because the custom non-EDA trigger handler should still exist
         System.assertEquals(TDTM_DefaultConfig.getDefaultRecords().size(), tdtmHandlers.size()-1);
 
-        for(Trigger_Handler__c h:tdtmHandlers){
+        for (Trigger_Handler__c h : tdtmHandlers) {
             if(h.Class__c != 'Contact_Update') { // exclude custom handler
                 System.assertEquals('hed', h.Owned_by_Namespace__c);
 
@@ -190,7 +195,7 @@ public with sharing class STG_InstallScript_TEST {
         // Verify the number of default records didn't change.
         System.assertEquals(TDTM_DefaultConfig.getDefaultRecords().size(), tdtmHandlers2.size()-1);
 
-        for(Trigger_Handler__c h: tdtmHandlers2){
+        for (Trigger_Handler__c h: tdtmHandlers2) {
             if(h.Class__c != 'Contact_Update') {
                 // Verify 'hed' namespace still persists
                 System.assertEquals('hed', h.Owned_by_Namespace__c);
@@ -213,21 +218,21 @@ public with sharing class STG_InstallScript_TEST {
         //Create 201 accounts of adminRecType
         String adminRecTypeId = UTIL_Describe_API.getAdminAccRecTypeID();
         List<Account> accs = new List<Account>();
-        for(Integer i = 0; i < 200; i++) {
+        for (Integer i = 0; i < 200; i++) {
             accs.add(new Account(Name = 'acctest' + i, RecordTypeId = adminRecTypeId));
         }
         insert accs;
 
         //Create 201 contacts and link them with those accounts
         List<Contact> contacts = new List<Contact>();
-        for(Integer i = 0; i < 200; i++) {
+        for (Integer i = 0; i < 200; i++) {
             contacts.add(new Contact(LastName = 'contest' + i, AccountId = accs[i].Id));
         }
         insert contacts;
 
         //Create 201 addresses and link them with those accounts
         List<Address__c> addrs = new List<Address__c>();
-        for(Integer i = 0; i < 200; i++) {
+        for (Integer i = 0; i < 200; i++) {
             addrs.add(new Address__c(Parent_Account__c = accs[i].Id));
         }
         insert addrs;
@@ -238,8 +243,8 @@ public with sharing class STG_InstallScript_TEST {
         Test.stopTest();
 
         //Verify addresses are now linked with the contacts
-        addrs = [select Parent_Account__c, Parent_Contact__c from Address__c where ID IN :addrs];
-        for(Address__c addr : addrs) {
+        addrs = [SELECT Parent_Account__c, Parent_Contact__c FROM Address__c WHERE ID IN :addrs];
+        for (Address__c addr : addrs) {
             System.assertEquals(null, addr.Parent_Account__c);
             System.assertNotEquals(null, addr.Parent_Contact__c);
         }
@@ -263,7 +268,7 @@ public with sharing class STG_InstallScript_TEST {
         // back on for install script
 		TDTM_ProcessControl.setRecursionFlag(TDTM_ProcessControl.registeredTrigger.ACCT_IndividualAccounts_TDTM_After_Insert, false);
 
-        Contact contWithoutAccId = [Select AccountId from Contact where Id = :cont.Id];        
+        Contact contWithoutAccId = [SELECT AccountId FROM Contact WHERE Id = :cont.Id];        
         System.assertEquals(null, contWithoutAccId.AccountId);
 
         Test.startTest();
@@ -271,7 +276,7 @@ public with sharing class STG_InstallScript_TEST {
         Test.stopTest();
         
         //After we run install script, system should populate the AccountId field of the Contact
-        Contact contWithAccId = [Select AccountId from Contact where Id = :cont.Id];
+        Contact contWithAccId = [SELECT AccountId FROM Contact WHERE Id = :cont.Id];
         System.assertNotEquals(null, contWithAccId.AccountId);
 
     }
@@ -322,13 +327,47 @@ public with sharing class STG_InstallScript_TEST {
         upsert orgSettings;
 
         Test.startTest();
-        //Run the install script for orgs using HEDA 1.67
+        //Run the install script for orgs using EDA 1.67
         Test.testInstall(new STG_InstallScript(), new Version(1,67), true);
         Test.stopTest();
 
         Hierarchy_Settings__c updatedSettings = UTIL_CustomSettingsFacade.getSettings();
         System.assertNotEquals(null, updatedSettings.Administrative_Account_Record_Type__c);
         System.assertNotEquals('', updatedSettings.Administrative_Account_Record_Type__c);
-        system.assertEquals(UTIL_Describe_API.getAdminAccRecTypeID(), orgSettings.Administrative_Account_Record_Type__c);
+        System.assertEquals(UTIL_Describe_API.getAdminAccRecTypeID(), orgSettings.Administrative_Account_Record_Type__c);
+    }
+
+    @isTest
+    private static void setDefaultContactLanguageFluencyOnUpgrade() {
+        Hierarchy_Settings__c orgSettings = UTIL_CustomSettingsFacade.getSettings();
+        orgSettings.Default_Contact_Language_Fluency__c = '';
+        upsert orgSettings;
+        
+        Test.startTest();
+        // Run the install script for orgs using HEDA 1.74
+        Test.testInstall(new STG_InstallScript(), new Version(1,74), true);
+        Test.stopTest();
+
+        Hierarchy_Settings__c updatedSettings = UTIL_CustomSettingsFacade.getSettings();
+        System.assertEquals(Label.stgFluent, updatedSettings.Default_Contact_Language_Fluency__c);
+    }
+    
+    @isTest
+    private static void disablePreferredPhoneOnUpgrade() {
+        Hierarchy_Settings__c orgSettings = UTIL_CustomSettingsFacade.getSettings();
+        orgSettings.Disable_Preferred_Phone_Enforcement__c = False;
+        upsert orgSettings;
+        
+        Test.startTest();
+        // Run the install script for orgs using HEDA 1.81
+        Test.testInstall(new STG_InstallScript(), new Version(1,81), true);
+        Test.stopTest();
+
+        List<Trigger_Handler__c> turnOffPreferredPhone = [SELECT Active__c FROM Trigger_Handler__c WHERE Class__c = 'CON_PreferredPhone_TDTM'];
+        Hierarchy_Settings__c updatedSettings = UTIL_CustomSettingsFacade.getSettings();
+        
+        System.assertEquals(True, updatedSettings.Disable_Preferred_Phone_Enforcement__c);
+        System.assertEquals(False, turnOffPreferredPhone[0].Active__c);
+
     }
 }

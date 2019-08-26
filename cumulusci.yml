@@ -1,13 +1,13 @@
 project:
-    name: HEDAP
+    name: EDA
     package:
-        name: HEDA
+        name: EDA
         namespace: hed
         api_version: 45.0
         install_class: STG_InstallScript
     git:
         prefix_release: rel/
-        repo_url: https://github.com/SalesforceFoundation/HEDAP
+        repo_url: https://github.com/SalesforceFoundation/EDA
     apexdoc:
         homepage: ApexDocContent/homepage.htm
         banner: ApexDocContent/projectheader.htm
@@ -17,17 +17,25 @@ project:
 tasks:
     deploy_dev_config:
         description: Deploys configuration for Development. Assigns page layouts, compact layouts, and sets tab visibilities. Record type visibilities are set the update_admin_profile task
-        class_path: cumulusci.tasks.salesforce.DeployBundles
+        class_path: cumulusci.tasks.salesforce.Deploy
         options:
             namespace_inject: $project_config.project__package__namespace
-            path: dev_config/src
+            path: unpackaged/config/dev
+            unmanaged: True
+
+    deploy_qa_config:
+        description: Deploys configuration for QA.
+        class_path: cumulusci.tasks.salesforce.Deploy
+        options:
+            namespace_inject: $project_config.project__package__namespace
+            path: unpackaged/config/qa
             unmanaged: True
 
     delete_dev_config:
         description: Removes Development configuration. Sets page layouts, compact layouts to system defaults. Removes record type visibilites.
         class_path: cumulusci.tasks.salesforce.Deploy
         options:
-            path: dev_config/delete
+            path: unpackaged/config/dev_delete
 
     execute_install_apex:
         description: Runs most of the install script methods from STG_InstallScript class
@@ -39,75 +47,51 @@ tasks:
                 STG_InstallScript.insertRelationshipLookups();
                 TDTM_Global_API.setTdtmConfig( TDTM_Global_API.getTdtmConfig() );
 
-    download_browser_tests:
-        description: Downloads the browser tests from the HEDA-Browser-Tests Github repository.
-        class_path: cumulusci.tasks.util.DownloadZip
+    execute_qa_apex:
+        description: Runs Apex setup for QA orgs.
+        class_path: cumulusci.tasks.apex.anon.AnonymousApexTask
         options:
-            url: 'https://github.com/SalesforceFoundation/HEDA-Browser-Tests/archive/master.zip'
-            dir: browser_tests
-            subfolder: HEDA-Browser-Tests-master
+            path: scripts/setup.cls
+            apex: qaSetup();
 
-    browsertests_firefox:
-        description: Runs the Ruby/Watir browser tests in the browsertests folder using Firefox
-        class_path: cumulusci.tasks.command.SalesforceBrowserTest
+    retrieve_config_dev:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/dev
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
         options:
-            command: 'cd browser_tests; bundle install --quiet; bundle exec cucumber --format pretty --format junit --out ../junit -c features/ --tags ~@flaky --tags ~@chrome'
-            dir: '.'
-            env:
-                SELENIUM_BROWSER: firefox
+            path: unpackaged/config/dev
+            namespace_tokenize: $project_config.project__package__namespace
 
-    browsertests_chrome:
-        description: Runs the Ruby/Watir browser tests in the browsertests folder using Chrome
-        class_path: cumulusci.tasks.command.SalesforceBrowserTest
+    retrieve_config_qa:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/qa
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
         options:
-            command: 'cd browser_tests; bundle install --quiet; bundle exec cucumber --format pretty --format junit --out ../junit -c features/ --tags ~@firefox --tags ~@flaky'
-            dir: '.'
-            env:
-                SELENIUM_BROWSER: chrome
+            path: unpackaged/config/qa
+            namespace_tokenize: $project_config.project__package__namespace
 
-    browsertests_unmanaged_firefox:
-        description: Runs the Ruby/Watir browser tests in the browsertests folder against unmanaged metadata in Firefox
-        class_path: cumulusci.tasks.command.SalesforceBrowserTest
+    retrieve_config_trial:
+        description: Retrieves the current changes in the scratch org into unpackaged/config/trial
+        class_path: cumulusci.tasks.salesforce.sourcetracking.RetrieveChanges
         options:
-            command: 'cd browser_tests; bundle install --quiet; bundle exec cucumber --format pretty --format junit --out ../junit -c features/ --tags ~@flaky --tags ~@chrome'
-            dir: '.'
-            env:
-                SELENIUM_BROWSER: firefox
-                TARGET_ORG: unmanaged
+            path: unpackaged/config/trial
+            namespace_tokenize: $project_config.project__package__namespace
 
-    browsertests_unmanaged_chrome:
-        description: Runs the Ruby/Watir browser tests in the browsertests folder against unmanaged metadata in Chrome
-        class_path: cumulusci.tasks.command.SalesforceBrowserTest
+    robot:
         options:
-            command: 'cd browser_tests; bundle install --quiet; bundle exec cucumber --format pretty --format junit --out ../junit -c features/ --tags ~@firefox --tags ~@flaky'
-            dir: '.'
-            env:
-                SELENIUM_BROWSER: chrome
-                TARGET_ORG: unmanaged
-    mockaroo_contacts:
-        class_path: cumulusci_mockaroo.tasks.MockarooToSql
-        options:
-            schema: 'HEDA: Contacts'
-            count: 10
-            database_url: 'sqlite:///testdata.db'
-            table: 'Contact'
-            boolean_fields:
-                - FERPA__c
-                - Financial_Aid_Applicant__c
-                - HIPAA__C
-                - Military_Service__c
+            suites: robot/EDA/tests
+            options:
+                outputdir: robot/EDA/results
 
     robot_libdoc:
         options:
-            path: tests/HEDA.py,tests/HEDA.robot
-            output: tests/Keywords.html
+            path: robot/EDA/resources/EDA.py,robot/EDA/resources/EDA.robot
+            output: robot/EDA/doc/Keywords.html
 
     update_admin_profile:
         class_path: tasks.salesforce.UpdateAdminProfile
 
 flows:
-    hedaectomy:
-        description: Remove all the HEDA metadata in the target Org
+    edaectomy:
+        description: Remove all the EDA metadata in the target Org
         steps:
             1:
                 task: delete_dev_config
@@ -167,6 +151,21 @@ flows:
                 task: execute_install_apex
             4:
                 task: deploy_dev_config
+            5:
+                task: execute_qa_apex
+            6:
+                task: deploy_qa_config
+
+    config_regression:
+        steps:
+            2:
+                task: execute_qa_apex
+                options:
+                    managed: True
+            3:
+                task: deploy_qa_config
+                options:
+                    unmanaged: False
 
     deploy_unmanaged:
         steps:
@@ -182,84 +181,6 @@ flows:
                     update_admin_profile:
                         namespaced_org: True
 
-    release_beta:
-        steps:
-            5:
-                task: mrbelvedere_publish
-                options:
-                    tag: ^^github_release.tag_name
-
-    browsertests_firefox:
-        description: Runs the browser tests locally against a managed package in Firefox
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_firefox
-
-    browsertests_chrome:
-        description: Runs the browser tests locally against a managed package in Chrome
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_chrome
-
-    browsertests_unmanaged_firefox:
-        description: Runs the browser tests via SauceLabs against the unmanaged metadata in Firefox
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_unmanaged_firefox
-
-    browsertests_unmanaged_chrome:
-        description: Runs the browser tests via SauceLabs against the unmanaged metadata in Chrome
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_unmanaged_chrome
-
-    ci_browsertests_firefox:
-        description: Runs the browser tests via SauceLabs against a managed package in Firefox
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_firefox
-                options:
-                    use_saucelabs: True
-
-    ci_browsertests_chrome:
-        description: Runs the browser tests via SauceLabs against a managed package in Chrome
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_chrome
-                options:
-                    use_saucelabs: True
-
-    ci_browsertests_unmanaged_firefox:
-        description: Runs the browser tests via SauceLabs against the unmanaged metadata in Firefox
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_unmanaged_firefox
-                options:
-                    use_saucelabs: True
-
-    ci_browsertests_unmanaged_chrome:
-        description: Runs the browser tests via SauceLabs against the unmanaged metadata in Chrome
-        steps:
-            1:
-                task: download_browser_tests
-            2:
-                task: browsertests_unmanaged_chrome
-                options:
-                    use_saucelabs: True
 
 services:
     mockaroo:
@@ -274,6 +195,8 @@ orgs:
         dev_namespaced:
             config_file: orgs/dev.json
             namespaced: True
+        prerelease:
+            config_file: orgs/prerelease.json
 
 plans:
     install:
@@ -286,13 +209,17 @@ plans:
                 ui_options:
                     deploy_pre:
                         acc_record_types:
-                            name: HEDA - Account Record Types
+                            name: EDA - Account Record Types
                         contact_key_affl_fields:
-                            name: HEDA - Contact Key Affiliation Fields
+                            name: EDA - Contact Key Affiliation Fields
             2:
                 task: install_managed
             3:
                 task: deploy_post
                 ui_options:
                     course_connection_record_types:
-                        name: Course Connection Record Types for HEDA
+                        name: Course Connection Record Types for EDA
+                    facility_display_name:
+                        name: Facility Display Name Formula Field
+                options:
+                    unmanaged: false

@@ -58,6 +58,7 @@ public class TDTM_ProcessControl {
         AFFL_MultiRecordType_TDTM_After_Update,
         COFF_Affiliation_TDTM,
         CON_Preferred_TDTM,
+        CON_PreferredPhone_TDTM,
         CON_PrimaryAffls_TDTM_After_Insert,
         CON_PrimaryAffls_TDTM_After_Update,
         AFFL_MultiRecordType_TDTM_afflMadePrimary,
@@ -66,7 +67,17 @@ public class TDTM_ProcessControl {
         PPlan_Primary_TDTM_Before_Update,
         PREN_ProgramPlan_TDTM_Before_Insert,
         PPlan_Primary_TDTM_After_Insert,
-        PPlan_Primary_TDTM_After_Update
+        PPlan_Primary_TDTM_After_Update,
+        CLAN_PrimaryLanguage_TDTM,
+        CON_PrimaryLanguage_TDTM,
+        AFFL_AccRecordType_TDTM,
+        TB_StartEndTime_TDTM,
+        REL_Relationships_Con_TDTM,
+        REL_Relationships_Cm_TDTM,
+        REL_Relationships_TDTM_After_Update,
+        CCON_Faculty_TDTM,
+        TERM_CourseOff_TDTM,
+        ATTD_CourseConnectionContact_TDTM
     }
 
     /*******************************************************************************************************

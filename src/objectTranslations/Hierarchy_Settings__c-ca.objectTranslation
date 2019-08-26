@@ -44,7 +44,7 @@
         <name>Advancement_Namespace__c</name>
     </fields>
     <fields>
-        <help><!-- If checked, an error results when users populate a primary field on Contact with an Account that has a record type mismatch to the record type defined in HEDA Settings. The Affiliation record is not created and primary fields on Contact are not corrected --></help>
+        <help><!-- If checked, an error results when users populate a primary field on Contact with an Account that has a record type mismatch to the record type defined in EDA Settings. The Affiliation record is not created and primary fields on Contact are not corrected --></help>
         <label><!-- Affiliation Record Type Enforced --></label>
         <name>Affiliation_Record_Type_Enforced__c</name>
     </fields>
@@ -103,7 +103,12 @@
         <name>Contacts_Addresses_Enabled__c</name>
     </fields>
     <fields>
-        <help>Si es marca, el marc de maneig d&apos;errors de HEDA està desactivat.</help>
+        <help><!-- The Fluency value automatically set on newly created Contact Language records when users set the Primary Language lookup field on a Contact. --></help>
+        <label><!-- Default Contact Language Fluency --></label>
+        <name>Default_Contact_Language_Fluency__c</name>
+    </fields>
+    <fields>
+        <help>Si es marca, el marc de maneig d&apos;errors de EDA està desactivat.</help>
         <label>Desactiva el maneig d&apos;errors</label>
         <name>Disable_Error_Handling__c</name>
     </fields>
@@ -111,6 +116,11 @@
         <help>Seleccioneu aquesta casella per desactivar l&apos;aplicació del camp de correu electrònic preferit per a contactes.</help>
         <label>Desact. aplicació correu elect. preferit</label>
         <name>Disable_Preferred_Email_Enforcement__c</name>
+    </fields>
+    <fields>
+        <help><!-- Select this box to disable the enforcement of the Preferred Phone field for Contacts. --></help>
+        <label><!-- Disable Preferred Phone Enforcement --></label>
+        <name>Disable_Preferred_Phone_Enforcement__c</name>
     </fields>
     <fields>
         <label>Activa les connexions del curs</label>
@@ -151,6 +161,11 @@
         <name>Household_Other_Name_Setting__c</name>
     </fields>
     <fields>
+        <help><!-- Select a desired Preferred Phone when the Batch Job runs. --></help>
+        <label><!-- Preferred Phone Selection --></label>
+        <name>Preferred_Phone_Selection__c</name>
+    </fields>
+    <fields>
         <help>Determina el mètode utilitzat per generar la relació recíproca. Configuració de la llista que utilitza la configuració personalitzada per sexe, o la inversió de valor, que inverteix el tipus, si escau (&quot;Principal-Derivat&quot; a &quot;Derivat-Principal&quot;)</help>
         <label>Mètode recíproc</label>
         <name>Reciprocal_Method__c</name>
@@ -178,6 +193,11 @@
     <fields>
         <label>Tipus de registre d&apos;estudiant</label>
         <name>Student_RecType__c</name>
+    </fields>
+    <fields>
+        <help><!-- When selected, Plan Requirements can specify either a Program Plan or a parent Plan Requirement, but not both. If you specify both a Program Plan and a parent Plan Requirement, an error message will prevent you from saving until only one is selected. --></help>
+        <label><!-- Validate Program Plan for Nested PR --></label>
+        <name>Validate_Program_Plan_for_Nested_PR__c</name>
     </fields>
     <gender><!-- Feminine --></gender>
     <startsWith><!-- Consonant --></startsWith>

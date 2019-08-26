@@ -14,7 +14,15 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>AfflProgEnrollDeleted</shortDescription>
-        <value>If selected, when deleting a Program Enrollment, delete its related Affiliation. Otherwise, keep the Affiliation and set its Status to the value defined in Status of Affiliation Related to Deleted Program Enrollment.</value>
+        <value>If selected, when deleting a Program Enrollment, delete its related Affiliation. Otherwise, keep the Affiliation and set its Status to the value defined in Status Specified for Affiliations Not Deleted.</value>
+    </labels>
+    <labels>
+        <fullName>AttendanceCourseConnectionContactMismatch</fullName>
+        <categories>Error</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>AttendanceCourseConnectionContactMismatch</shortDescription>
+        <value>Specify a Course Connection that has the same Contact as you specified for this Attendance Event.</value>
     </labels>
     <labels>
         <fullName>AutoCreateFieldError</fullName>
@@ -22,7 +30,15 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>AutoCreateFieldError</shortDescription>
-        <value>Unable to find valid autocreation Relationship settings. Please check the settings under HEDA Settings | Relationships | Autocreation for valid fields and try again.</value>
+        <value>Unable to find valid autocreation Relationship settings. Please check the settings under EDA Settings | Relationships | Autocreation for valid fields and try again.</value>
+    </labels>
+    <labels>
+        <fullName>BatchJobRunningProblem</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Batch message when it has a problem starting.</shortDescription>
+        <value>There was a problem starting the Batch.</value>
     </labels>
     <labels>
         <fullName>BothFieldAndValue</fullName>
@@ -121,6 +137,30 @@
         <value>Tell us which email is preferred.</value>
     </labels>
     <labels>
+        <fullName>PreferredPhoneMatchMustExist</fullName>
+        <categories>Contacts</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PreferredPhoneMatchMustExist</shortDescription>
+        <value>We can&apos;t find the Phone specified in Preferred Phone. Make sure that you&apos;re entering the field label of an existing custom Phone field.</value>
+    </labels>
+    <labels>
+        <fullName>PreferredPhoneMatchNotNull</fullName>
+        <categories>Contacts</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PreferredPhoneMatchNotNull</shortDescription>
+        <value>The phone selected for Preferred Phone can&apos;t be blank.</value>
+    </labels>
+    <labels>
+        <fullName>PreferredPhoneRequiredError</fullName>
+        <categories>Contacts</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PreferredPhoneRequiredError</shortDescription>
+        <value>Tell us which Phone is preferred.</value>
+    </labels>
+    <labels>
         <fullName>Relationship_Explanation_Connector</fullName>
         <categories>Relationships</categories>
         <language>en_US</language>
@@ -182,7 +222,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>addrNotEnabledAccount</shortDescription>
-        <value>The ability to add multiple addresses is disabled for this Account record type. To enable it, go to HEDA Settings, click on Accounts and Contacts, and select the appropriate checkbox next to Account Types with Multi-Addresses Enabled.</value>
+        <value>The ability to add multiple addresses is disabled for this Account record type. To enable it, go to EDA Settings, click on Accounts and Contacts, and select the appropriate checkbox next to Account Types with Multi-Addresses Enabled.</value>
     </labels>
     <labels>
         <fullName>addrNotEnabledContact</fullName>
@@ -190,7 +230,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>addrNotEnabledContact</shortDescription>
-        <value>The ability to add multiple addresses is disabled for Contacts. To enable it, go to HEDA Settings, click on Accounts and Contacts, then select the Contact Multi-Addresses Enabled checkbox.</value>
+        <value>The ability to add multiple addresses is disabled for Contacts. To enable it, go to EDA Settings, click on Accounts and Contacts, then select the Contact Multi-Addresses Enabled checkbox.</value>
     </labels>
     <labels>
         <fullName>addrSeasonalOverlap</fullName>
@@ -278,7 +318,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>afflTypeEnforcedDescription</shortDescription>
-        <value>When selected, if users specify an Account as a Contact&apos;s Primary Affiliation, HEDA requires that the Account have a record type and that all Account Record Type values are correctly mapped to their respective Contact Primary Affl Fields in Affiliation Mappings. If validation fails, an error prevents the Affiliation from being saved.</value>
+        <value>When selected, if users specify an Account as a Contact&apos;s Primary Affiliation, EDA requires that the Account have a record type and that all Account Record Type values are correctly mapped to their respective Contact Primary Affl Fields in Affiliation Mappings. If validation fails, an error prevents the Affiliation from being saved.</value>
     </labels>
     <labels>
         <fullName>automaticHHNaming</fullName>
@@ -318,7 +358,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Error message for TDTM filtering functionality.</shortDescription>
-        <value>The Filter Field value names a duplicate of a HEDA field. We will filter according to the value in the HEDA field. To proceed with saving this record, either specify a non-duplicate field or acknowledge that you accept this filtering logic by appending {0} after the field name. For example, if the duplicate field is Deceased__c, enter Deceased__c{0} as the Filter Field value.</value>
+        <value>The Filter Field value names a duplicate of an EDA field. We will filter according to the value in the EDA field. To proceed with saving this record, either specify a non-duplicate field or acknowledge that you accept this filtering logic by appending {0} after the field name. For example, if the duplicate field is Deceased__c, enter Deceased__c{0} as the Filter Field value.</value>
     </labels>
     <labels>
         <fullName>exceptionRequiredField</fullName>
@@ -342,7 +382,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Error message for TDTM filtering functionality.</shortDescription>
-        <value>The Filter Field value can&apos;t include the HEDA namespace. Remove it from the field name.</value>
+        <value>The Filter Field value can&apos;t include the EDA namespace. Remove it from the field name.</value>
     </labels>
     <labels>
         <fullName>firstNameLastNameAdminACC</fullName>
@@ -448,6 +488,14 @@
         <value>{!LastName} Household</value>
     </labels>
     <labels>
+        <fullName>nestedPlanRequirementPPExp</fullName>
+        <categories>Error</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>nestedPlanRequirementPPExp</shortDescription>
+        <value>Plan Requirements can specify either a Program Plan or a parent Plan Requirement, but not both. If this Plan Requirement is a child of another Plan Requirement, specify a parent Plan Requirement only. If this Plan Requirement is a child of a Program Plan, specify a Program Plan only.</value>
+    </labels>
+    <labels>
         <fullName>noAccRecType</fullName>
         <categories>Record Types</categories>
         <language>en_US</language>
@@ -486,6 +534,14 @@
         <protected>true</protected>
         <shortDescription>preferredBatchDefaultEmail</shortDescription>
         <value>Email (standard)</value>
+    </labels>
+    <labels>
+        <fullName>preferredBatchDefaultPhone</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>preferredBatchDefaultPhone</shortDescription>
+        <value>Phone (standard)</value>
     </labels>
     <labels>
         <fullName>stgAccModelTitle</fullName>
@@ -872,6 +928,14 @@
         <value>Course Description Copy Job Completed with a status of:</value>
     </labels>
     <labels>
+        <fullName>stgDefaultContactLanguageFluency</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>stgDefaultContactLanguageFluency</shortDescription>
+        <value>Default Contact Language Fluency</value>
+    </labels>
+    <labels>
         <fullName>stgDefaultFacultyTypeTitle</fullName>
         <categories>Settings</categories>
         <language>en_US</language>
@@ -904,6 +968,14 @@
         <value>Disable Preferred Email enforcement:</value>
     </labels>
     <labels>
+        <fullName>stgDisablePreferredPhoneEnforcement</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgDisablePreferredPhoneEnforcement</shortDescription>
+        <value>Disable Preferred Phone enforcement:</value>
+    </labels>
+    <labels>
         <fullName>stgEnableCourseConnectionsTitle</fullName>
         <categories>Settings</categories>
         <language>en_US</language>
@@ -934,6 +1006,14 @@
         <protected>true</protected>
         <shortDescription>stgEthnicityRaceBackfillContacts</shortDescription>
         <value>Ethnicity and Race Backfill for Contacts</value>
+    </labels>
+    <labels>
+        <fullName>stgFluent</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgFluent</shortDescription>
+        <value>Fluent</value>
     </labels>
     <labels>
         <fullName>stgHelpAccountModel</fullName>
@@ -1064,6 +1144,14 @@
         <value>Do not require Contacts to have a Preferred Email.</value>
     </labels>
     <labels>
+        <fullName>stgHelpContactPreferredPhone</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgHelpContactPreferredPhone</shortDescription>
+        <value>Do not require Contacts to have a Preferred Phone.</value>
+    </labels>
+    <labels>
         <fullName>stgHelpCopyQueuedEmailSent</fullName>
         <categories>Settings</categories>
         <language>en_US</language>
@@ -1085,7 +1173,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgHelpCoursesDataMigration</shortDescription>
-        <value>In HEDA 1.30, the Extended Description field was added to accommodate longer course descriptions.</value>
+        <value>In EDA 1.30, the Extended Description field was added to accommodate longer course descriptions.</value>
     </labels>
     <labels>
         <fullName>stgHelpCoursesDataMigrationCopiesValues</fullName>
@@ -1110,6 +1198,14 @@
         <protected>true</protected>
         <shortDescription>stgHelpCoursesDataMigrationUpdatePageLayouts</shortDescription>
         <value>After the process is complete, remember to update page layouts and other areas of the application that refer to the Description fields.</value>
+    </labels>
+    <labels>
+        <fullName>stgHelpDefaultContactLanguageFluency</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>stgHelpDefaultContactLanguageFluency</shortDescription>
+        <value>The Fluency value automatically set on newly created Contact Language records when users set the Primary Language lookup field on a Contact.</value>
     </labels>
     <labels>
         <fullName>stgHelpDefaultFacultyType</fullName>
@@ -1157,7 +1253,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgHelpEnsureExistContactPreferEmail</shortDescription>
-        <value>For existing Contacts who haven&apos;t specified a Preferred Email, the cleanup ensures that one of the Contact&apos;s standard or custom email addresses is set as the Preferred Email.</value>
+        <value>For existing Contacts who haven&apos;t specified a Preferred Email or Preferred Phone, the cleanup ensures that one of the Contact&apos;s standard or custom email addresses or phone numbers are set as the preferred value.</value>
     </labels>
     <labels>
         <fullName>stgHelpErrorDisable</fullName>
@@ -1165,7 +1261,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>stgHelpErrorDisable</shortDescription>
-        <value>If checked, HEDA&apos;s error handling framework is disabled.</value>
+        <value>If checked, EDA&apos;s error handling framework is disabled.</value>
     </labels>
     <labels>
         <fullName>stgHelpErrorNotifyOn</fullName>
@@ -1189,7 +1285,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgHelpEthnicityRaceBackfill</shortDescription>
-        <value>Use the Ethnicity and Race Backfill only if your org used the Ethnicity field before HEDA added the Race field and removed values from the Ethnicity field as of HEDA version 1.28. If the value in the Contact&apos;s Ethnicity field does not equal “Not Hispanic or Latino” or “Hispanic or Latino,” the Backfill copies the value to the Race field. Both standard picklist values and any custom values that you may have added are eligible to be copied.</value>
+        <value>Use the Ethnicity and Race Backfill only if your org used the Ethnicity field before EDA added the Race field and removed values from the Ethnicity field as of EDA version 1.28. If the value in the Contact&apos;s Ethnicity field does not equal “Not Hispanic or Latino” or “Hispanic or Latino,” the Backfill copies the value to the Race field. Both standard picklist values and any custom values that you may have added are eligible to be copied.</value>
     </labels>
     <labels>
         <fullName>stgHelpHouseAdmAccountAddressMgmt</fullName>
@@ -1214,6 +1310,14 @@
         <protected>true</protected>
         <shortDescription>stgHelpIfCustomValuesEthnicityCopyRace</shortDescription>
         <value>If your org previously added custom picklist values to the Ethnicity field that you want to be available in the Race field, copy those custom picklist values to the Race field.</value>
+    </labels>
+    <labels>
+        <fullName>stgHelpNestedPlanRequirementPP</fullName>
+        <categories>Setting</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgHelpNestedPlanRequirementPP</shortDescription>
+        <value>When selected, Plan Requirements can specify either a Program Plan or a parent Plan Requirement, but not both. If you specify both a Program Plan and a parent Plan Requirement, an error message will prevent you from saving until only one is selected.</value>
     </labels>
     <labels>
         <fullName>stgHelpOrgAccountAddressMgmt</fullName>
@@ -1245,7 +1349,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgHelpRemoveAllPicklistValuesEthnicityExceptHispanicOrLatino</shortDescription>
-        <value>Remove all picklist values from the Ethnicity field except for &quot;Hispanic or Latino&quot; and &quot;Not Hispanic or Latino.&quot; We recommend that you replace each removed value with one of the remaining valid values, rather than deleting them outright from existing records. As of HEDA version 1.28, the only valid Ethnicity values are &quot;Not Hispanic or Latino&quot; and &quot;Hispanic or Latino.&quot;</value>
+        <value>Remove all picklist values from the Ethnicity field except for &quot;Hispanic or Latino&quot; and &quot;Not Hispanic or Latino.&quot; We recommend that you replace each removed value with one of the remaining valid values, rather than deleting them outright from existing records. As of EDA version 1.28, the only valid Ethnicity values are &quot;Not Hispanic or Latino&quot; and &quot;Hispanic or Latino.&quot;</value>
     </labels>
     <labels>
         <fullName>stgHelpSimpleAddrChangeIsUpdate</fullName>
@@ -1270,6 +1374,14 @@
         <protected>true</protected>
         <shortDescription>stgHelpUpdateReportIfDependenciesEthnicity</shortDescription>
         <value>If you had dependencies that relied on the previous values in the Ethnicity field, such as in reports, update them.</value>
+    </labels>
+    <labels>
+        <fullName>stgNestedPlanRequirementPP</fullName>
+        <categories>Setting</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgNestedPlanRequirementPP</shortDescription>
+        <value>Validate Program Plan for Nested Plan Requirements</value>
     </labels>
     <labels>
         <fullName>stgNewAfflMapping</fullName>
@@ -1325,7 +1437,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Setting Preferred Email batch Subject</shortDescription>
-        <value>Preferred Email Job completed with a status of:</value>
+        <value>Preferred Email/Phone Job completed with a status of:</value>
     </labels>
     <labels>
         <fullName>stgPreferredEmailDataCleanup</fullName>
@@ -1333,7 +1445,23 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgPreferredEmailDataCleanup</shortDescription>
-        <value>Preferred Email Data Cleanup:</value>
+        <value>Preferred Email/Phone Data Cleanup:</value>
+    </labels>
+    <labels>
+        <fullName>stgPreferredPhoneSelection</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Select a desired picklist value for the batch job to selct a value from</shortDescription>
+        <value>Select a field for Preferred Phone to copy the value from when the standard Phone field has no value, or more than one 'Phone' field is defined.</value>
+    </labels>
+    <labels>
+        <fullName>stgRunCleanUp</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Label for button on Settings UI</shortDescription>
+        <value>Run Cleanup</value>
     </labels>
     <labels>
         <fullName>stgRunCleanUpEnableFirstTime</fullName>
@@ -1341,7 +1469,15 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgRunCleanUpEnableFirstTime</shortDescription>
-        <value>Run this data cleanup process after you&apos;ve enabled the Preferred Email requirement for the first time or after a period of not enforcing the requirement.</value>
+        <value>Run this data cleanup process after you&apos;ve enabled the Preferred Email or Preferred Phone requirement for the first time or after a period of not enforcing the requirement.</value>
+    </labels>
+    <labels>
+        <fullName>stgSaveSettings</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgSaveSettings</shortDescription>
+        <value>Settings Saved Successfully.</value>
     </labels>
     <labels>
         <fullName>stgSelectReciType</fullName>
@@ -1374,6 +1510,14 @@
         <protected>false</protected>
         <shortDescription>stgStoreErrorsTitle</shortDescription>
         <value>Store Errors:</value>
+    </labels>
+    <labels>
+        <fullName>stgSuccess</fullName>
+        <categories>Settings</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>stgSuccess</shortDescription>
+        <value>Success</value>
     </labels>
     <labels>
         <fullName>stgTabAccCont</fullName>
@@ -1446,6 +1590,14 @@
         <protected>true</protected>
         <shortDescription>stgTabPrimaryAfflField</shortDescription>
         <value>Primary Affl Field</value>
+    </labels>
+    <labels>
+        <fullName>stgTabProgramPlan</fullName>
+        <categories>Setting</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>stgTabProgramPlan</shortDescription>
+        <value>Program Plans</value>
     </labels>
     <labels>
         <fullName>stgTabReciprocalSettings</fullName>
@@ -1525,7 +1677,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>stgTitleHEDASettings</shortDescription>
-        <value>HEDA Settings</value>
+        <value>EDA Settings</value>
     </labels>
     <labels>
         <fullName>stgTitleNewAutocreateSetting</fullName>
@@ -1558,5 +1710,21 @@
         <protected>true</protected>
         <shortDescription>stgToastError</shortDescription>
         <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>timeBlockEndTimeMismatch</fullName>
+        <categories>Error</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>timeBlockEndTimeMismatch</shortDescription>
+        <value>We can&apos;t save the Course Offering Schedule because its End Time doesn&apos;t match the End Time of its associated Time Block. Either edit the End Time, specify a different Time Block, or don&apos;t specify a Time Block.</value>
+    </labels>
+    <labels>
+        <fullName>timeBlockStartTimeMismatch</fullName>
+        <categories>Error</categories>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>timeBlockStartTimeMismatch</shortDescription>
+        <value>We can&apos;t save the Course Offering Schedule because its Start Time doesn&apos;t match the Start Time of its associated Time Block. Either edit the Start Time, specify a different Time Block, or don&apos;t specify a Time Block.</value>
     </labels>
 </CustomLabels>

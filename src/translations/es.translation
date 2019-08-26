@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Translations xmlns="http://soap.sforce.com/2006/04/metadata">
     <customApplications>
-        <label><!-- HEDA --></label>
+        <label><!-- EDA --></label>
         <name>HEDA</name>
     </customApplications>
     <customLabels>
@@ -13,7 +13,11 @@
         <name>AfflProgEnrollDeleted</name>
     </customLabels>
     <customLabels>
-        <label>No se puede encontrar configuraciones de creación automática de relación válidas. Compruebe la configuración en Configuración de HEDA | Relaciones | Autocreation para campos válidos y vuelva a intentarlo.</label>
+        <label><!-- AttendanceCourseConnectionContactMismatch --></label>
+        <name>AttendanceCourseConnectionContactMismatch</name>
+    </customLabels>
+    <customLabels>
+        <label>No se puede encontrar configuraciones de creación automática de relación válidas. Compruebe la configuración en Configuración de EDA | Relaciones | Autocreation para campos válidos y vuelva a intentarlo.</label>
         <name>AutoCreateFieldError</name>
     </customLabels>
     <customLabels>
@@ -65,6 +69,18 @@
         <name>PreferredEmailRequiredError</name>
     </customLabels>
     <customLabels>
+        <label><!-- PreferredPhoneMatchMustExist --></label>
+        <name>PreferredPhoneMatchMustExist</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- PreferredPhoneMatchNotNull --></label>
+        <name>PreferredPhoneMatchNotNull</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- PreferredPhoneRequiredError --></label>
+        <name>PreferredPhoneRequiredError</name>
+    </customLabels>
+    <customLabels>
         <label>es</label>
         <name>Relationship_Explanation_Connector</name>
     </customLabels>
@@ -93,11 +109,11 @@
         <name>addrHhAdmAccountOnly</name>
     </customLabels>
     <customLabels>
-        <label>La capacidad de agregar varias direcciones está deshabilitada para este tipo de registro de cuenta. Para activarla, vaya a Configuración de HEDA, haga clic en Cuentas y contactos y seleccione la casilla de verificación adecuada junto a Tipos de cuenta con direcciones múltiples activadas.</label>
+        <label>La capacidad de agregar varias direcciones está deshabilitada para este tipo de registro de cuenta. Para activarla, vaya a Configuración de EDA, haga clic en Cuentas y contactos y seleccione la casilla de verificación adecuada junto a Tipos de cuenta con direcciones múltiples activadas.</label>
         <name>addrNotEnabledAccount</name>
     </customLabels>
     <customLabels>
-        <label>La capacidad de agregar varias direcciones está deshabilitada para Contactos. Para habilitarla, vaya a Configuración de HEDA, haga clic en Cuentas y contactos y, a continuación, seleccione la casilla de verificación Contacto de direcciones múltiples habilitadas.</label>
+        <label>La capacidad de agregar varias direcciones está deshabilitada para Contactos. Para habilitarla, vaya a Configuración de EDA, haga clic en Cuentas y contactos y, a continuación, seleccione la casilla de verificación Contacto de direcciones múltiples habilitadas.</label>
         <name>addrNotEnabledContact</name>
     </customLabels>
     <customLabels>
@@ -229,6 +245,10 @@
         <name>lastNameHH</name>
     </customLabels>
     <customLabels>
+        <label><!-- nestedPlanRequirementPPExp --></label>
+        <name>nestedPlanRequirementPPExp</name>
+    </customLabels>
+    <customLabels>
         <label>El tipo de registro de cuenta definido no existe:</label>
         <name>noAccRecType</name>
     </customLabels>
@@ -247,6 +267,10 @@
     <customLabels>
         <label><!-- preferredBatchDefaultEmail --></label>
         <name>preferredBatchDefaultEmail</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- preferredBatchDefaultPhone --></label>
+        <name>preferredBatchDefaultPhone</name>
     </customLabels>
     <customLabels>
         <label>Modelo de cuenta predeterminado:</label>
@@ -441,6 +465,10 @@
         <name>stgCourseDescriptionCopyEmailSubject</name>
     </customLabels>
     <customLabels>
+        <label><!-- stgDefaultContactLanguageFluency --></label>
+        <name>stgDefaultContactLanguageFluency</name>
+    </customLabels>
+    <customLabels>
         <label>Tipo de registro de profesor predeterminado:</label>
         <name>stgDefaultFacultyTypeTitle</name>
     </customLabels>
@@ -457,6 +485,10 @@
         <name>stgDisablePreferredEmailEnforcement</name>
     </customLabels>
     <customLabels>
+        <label><!-- stgDisablePreferredPhoneEnforcement --></label>
+        <name>stgDisablePreferredPhoneEnforcement</name>
+    </customLabels>
+    <customLabels>
         <label>Habilitar conexiones de curso:</label>
         <name>stgEnableCourseConnectionsTitle</name>
     </customLabels>
@@ -471,6 +503,10 @@
     <customLabels>
         <label><!-- stgEthnicityRaceBackfillContacts --></label>
         <name>stgEthnicityRaceBackfillContacts</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgFluent --></label>
+        <name>stgFluent</name>
     </customLabels>
     <customLabels>
         <label>Configuración del modelo de cuenta. Administrativo es el modelo recomendado.</label>
@@ -537,6 +573,10 @@
         <name>stgHelpContactPreferredEmail</name>
     </customLabels>
     <customLabels>
+        <label><!-- stgHelpContactPreferredPhone --></label>
+        <name>stgHelpContactPreferredPhone</name>
+    </customLabels>
+    <customLabels>
         <label><!-- stgHelpCopyQueuedEmailSent --></label>
         <name>stgHelpCopyQueuedEmailSent</name>
     </customLabels>
@@ -559,6 +599,10 @@
     <customLabels>
         <label><!-- stgHelpCoursesDataMigrationUpdatePageLayouts --></label>
         <name>stgHelpCoursesDataMigrationUpdatePageLayouts</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgHelpDefaultContactLanguageFluency --></label>
+        <name>stgHelpDefaultContactLanguageFluency</name>
     </customLabels>
     <customLabels>
         <label>El tipo de registro predeterminado cuando se crean Conexiones de curso para un profesor.</label>
@@ -585,7 +629,7 @@
         <name>stgHelpEnsureExistContactPreferEmail</name>
     </customLabels>
     <customLabels>
-        <label>Si se selecciona, se deshabilita el marco de trabajo de control de errores de HEDA.</label>
+        <label>Si se selecciona, se deshabilita el marco de trabajo de control de errores de EDA.</label>
         <name>stgHelpErrorDisable</name>
     </customLabels>
     <customLabels>
@@ -605,12 +649,16 @@
         <name>stgHelpHouseAdmAccountAddressMgmt</name>
     </customLabels>
     <customLabels>
-        <label>El tipo de registro de cuenta que mejor representa a los domicilios. HEDA utiliza el tipo de registro de cuenta de domicilio de manera predeterminada, pero puede usar otro tipo de registro si lo desea.</label>
+        <label>El tipo de registro de cuenta que mejor representa a los domicilios. EDA utiliza el tipo de registro de cuenta de domicilio de manera predeterminada, pero puede usar otro tipo de registro si lo desea.</label>
         <name>stgHelpHouseholdRecType</name>
     </customLabels>
     <customLabels>
         <label><!-- stgHelpIfCustomValuesEthnicityCopyRace --></label>
         <name>stgHelpIfCustomValuesEthnicityCopyRace</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgHelpNestedPlanRequirementPP --></label>
+        <name>stgHelpNestedPlanRequirementPP</name>
     </customLabels>
     <customLabels>
         <label>Habilita direcciones para Cuentas de organización cuando se selecciona esta opción.</label>
@@ -639,6 +687,10 @@
     <customLabels>
         <label><!-- stgHelpUpdateReportIfDependenciesEthnicity --></label>
         <name>stgHelpUpdateReportIfDependenciesEthnicity</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgNestedPlanRequirementPP --></label>
+        <name>stgNestedPlanRequirementPP</name>
     </customLabels>
     <customLabels>
         <label><!-- stgNewAfflMapping --></label>
@@ -673,8 +725,20 @@
         <name>stgPreferredEmailDataCleanup</name>
     </customLabels>
     <customLabels>
+        <label><!-- Select a desired picklist value for the batch job to selct a value from --></label>
+        <name>stgPreferredPhoneSelection</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- Label for button on Settings UI --></label>
+        <name>stgRunCleanUp</name>
+    </customLabels>
+    <customLabels>
         <label><!-- stgRunCleanUpEnableFirstTime --></label>
         <name>stgRunCleanUpEnableFirstTime</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgSaveSettings --></label>
+        <name>stgSaveSettings</name>
     </customLabels>
     <customLabels>
         <label><!-- stgSelectReciType --></label>
@@ -691,6 +755,10 @@
     <customLabels>
         <label>Almacenar Errores:</label>
         <name>stgStoreErrorsTitle</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgSuccess --></label>
+        <name>stgSuccess</name>
     </customLabels>
     <customLabels>
         <label><!-- stgTabAccCont --></label>
@@ -727,6 +795,10 @@
     <customLabels>
         <label><!-- stgTabPrimaryAfflField --></label>
         <name>stgTabPrimaryAfflField</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- stgTabProgramPlan --></label>
+        <name>stgTabProgramPlan</name>
     </customLabels>
     <customLabels>
         <label><!-- stgTabReciprocalSettings --></label>
@@ -784,8 +856,16 @@
         <label><!-- stgToastError --></label>
         <name>stgToastError</name>
     </customLabels>
+    <customLabels>
+        <label><!-- timeBlockEndTimeMismatch --></label>
+        <name>timeBlockEndTimeMismatch</name>
+    </customLabels>
+    <customLabels>
+        <label><!-- timeBlockStartTimeMismatch --></label>
+        <name>timeBlockStartTimeMismatch</name>
+    </customLabels>
     <customTabs>
-        <label>Configuración de HEDA</label>
+        <label>Configuración de EDA</label>
         <name>HEDA_Settings</name>
     </customTabs>
 </Translations>
